@@ -1,0 +1,34 @@
+{% extends "_base.html" %}
+{% block conteudo %}
+<div class="bg-white pokemon-panel p-8 rounded-lg max-w-xl mx-auto uppercase">
+    <h2 class="text-2xl text-gray-800 mb-6 border-b-4 border-gray-100 pb-2 text-center font-bold">Registro de Treinador</h2>
+    {% if erro %}<div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4 text-xs text-yellow-700">{{ erro }}</div>{% endif %}
+    <form action="treinadores_inserir.php" method="POST" class="space-y-6">
+        <div>
+            <label class="block text-gray-500 mb-2">NOME DO TREINADOR:</label>
+            <input type="text" name="nome" required class="w-full border-4 border-gray-200 p-3 focus:border-red-400 outline-none uppercase">
+        </div>
+        <div>
+            <label class="block text-gray-500 mb-2">EMAIL (POKéGEAR):</label>
+            <input type="email" name="email" required class="w-full border-4 border-gray-200 p-3 focus:border-red-400 outline-none lowercase">
+        </div>
+        <div>
+            <label class="block text-gray-500 mb-2">CIDADE DE ORIGEM:</label>
+            <select name="cidade" class="w-full border-4 border-gray-200 p-3 focus:border-red-400 outline-none">
+                <option value="Pallet Town">Pallet Town</option>
+                <option value="Viridian City">Viridian City</option>
+                <option value="Pewter City">Pewter City</option>
+                <option value="Cerulean City">Cerulean City</option>
+                <option value="Vermilion City">Vermilion City</option>
+                <option value="Lavender Town">Lavender Town</option>
+            </select>
+        </div>
+        <div class="flex justify-between items-center pt-4">
+            <a href="treinadores_listar.php" class="text-gray-400 hover:underline text-[10px]">CANCELAR</a>
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded border-b-4 border-red-900">
+                CADASTRAR
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

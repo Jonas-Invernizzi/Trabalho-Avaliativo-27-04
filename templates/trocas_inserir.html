@@ -1,0 +1,66 @@
+{% extends "_base.html" %}
+
+{% block conteudo %}
+<div class="bg-white pokemon-panel p-8 rounded-lg max-w-2xl mx-auto uppercase">
+    <h2 class="text-2xl text-gray-800 mb-8 border-b-4 border-gray-100 pb-2 text-center font-bold italic">Anunciar Troca</h2>
+    
+    {% if erro %}<div class="bg-red-100 border-l-4 border-red-500 p-4 mb-6 text-[10px] text-red-700">{{ erro }}</div>{% endif %}
+
+    <form action="trocas_inserir.php" method="POST" class="space-y-8">
+        <div class="bg-blue-50 p-4 border-2 border-blue-200">
+            <label class="block text-gray-600 mb-2">QUEM É VOCÊ?</label>
+            <select name="treinador_id" id="select_treinador" required class="w-full border-4 border-gray-200 p-3 outline-none focus:border-blue-400">
+                <option value="">Selecione um Treinador</option>
+                {% for t in treinadores %}
+                <option value="{{ t.id }}">{{ t.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-green-50 p-4 border-2 border-green-200">
+                <label class="block text-gray-600 mb-2">O QUE VOCÊ DÁ?</label>
+                <select name="captura_id_oferecida" id="select_capturas" disabled required class="w-full border-4 border-gray-200 p-3 outline-none focus:border-green-400">
+                    <option value="">Selecione o Treinador primeiro</option>
+                </select>
+            </div>
+
+            <div class="bg-red-50 p-4 border-2 border-red-200">
+                <label class="block text-gray-600 mb-2">O QUE VOCÊ QUER?</label>
+                <select name="pokedex_id_desejado" required class="w-full border-4 border-gray-200 p-3 outline-none focus:border-red-400">
+                    <option value="">Selecione o Pokémon desejado</option>
+                    {% for p in pokedex %}
+                    <option value="{{ p.id }}">{{ p.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-6">
+            <a href="trocas_listar.php" class="text-gray-400 hover:underline text-[10px]">VOLTAR</a>
+            <button type="submit" class="bg-firered hover:bg-red-700 text-white px-10 py-4 rounded border-b-4 border-red-900 font-bold">
+                PUBLICAR OFERTA
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('select_treinador').addEventListener('change', function() {
+    const tid = this.value;
+    const select = document.getElementById('select_capturas');
+    select.innerHTML = '<option value="">Carregando...</option>';
+    select.disabled = true;
+
+    fetch('api_capturas.php?treinador_id=' + tid)
+        .then(r => r.json())
+        .then(data => {
+            select.innerHTML = '<option value="">Selecione seu Pokémon</option>';
+            data.forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.especie} (${c.apelido || 'Sem apelido'}) - Nível ${c.nivel}</option>`;
+            });
+            select.disabled = false;
+        });
+});
+</script>
+{% endblock %}

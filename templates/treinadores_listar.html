@@ -1,0 +1,42 @@
+{% extends "_base.html" %}
+
+{% block conteudo %}
+<div class="bg-white pokemon-panel p-6 rounded-lg">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl text-gray-800">LISTA DE TREINADORES</h2>
+        <a href="treinadores_inserir.php" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded border-b-4 border-blue-800">
+            + NOVO TREINADOR
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-100 border-b-4 border-gray-200 text-gray-600 uppercase text-[10px]">
+                    <th class="p-4 text-center">ID</th>
+                    <th class="p-4">NOME</th>
+                    <th class="p-4">EMAIL</th>
+                    <th class="p-4">CIDADE</th>
+                    <th class="p-4 text-center">AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700">
+                {% for treinador in treinadores %}
+                <tr class="border-b-2 border-gray-100 hover:bg-gray-50 uppercase text-[10px]">
+                    <td class="p-4 text-center">#{{ treinador.id }}</td>
+                    <td class="p-4 font-bold">{{ treinador.nome }}</td>
+                    <td class="p-4 lowercase">{{ treinador.email }}</td>
+                    <td class="p-4">{{ treinador.cidade }}</td>
+                    <td class="p-4 text-center space-x-4">
+                        <a href="treinadores_editar.php?id={{ treinador.id }}" class="text-blue-500 hover:underline">EDITAR</a>
+                        <a href="treinadores_excluir.php?id={{ treinador.id }}" class="text-red-500 hover:underline">EXCLUIR</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="p-10 text-center text-gray-400 uppercase">Nenhum treinador registrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

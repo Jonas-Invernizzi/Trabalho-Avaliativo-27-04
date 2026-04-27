@@ -1,0 +1,68 @@
+{% extends "_base.html" %}
+
+{% block conteudo %}
+{% set tipos_pt = {
+    'normal': 'Normal',
+    'fire': 'Fogo',
+    'water': 'Água',
+    'grass': 'Planta',
+    'electric': 'Elétrico',
+    'ice': 'Gelo',
+    'fighting': 'Lutador',
+    'poison': 'Veneno',
+    'ground': 'Terra',
+    'flying': 'Voador',
+    'psychic': 'Psíquico',
+    'bug': 'Inseto',
+    'rock': 'Pedra',
+    'ghost': 'Fantasma',
+    'dragon': 'Dragão',
+    'dark': 'Sombrio',
+    'steel': 'Aço',
+    'fairy': 'Fada'
+} %}
+<div class="bg-white pokemon-panel p-8 rounded-lg max-w-2xl mx-auto">
+    <div class="flex items-center justify-center mb-6 space-x-4">
+        <div class="w-16 h-16 border-2 border-gray-200 rounded p-1">
+            <img src="{{ pokemon.imagem_url|default('img/default.png') }}" class="w-full h-full object-contain">
+        </div>
+        <h2 class="text-2xl text-gray-800 uppercase">Editar: {{ pokemon.nome }}</h2>
+    </div>
+
+    <form action="pokemons_editar.php" method="post" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="id" value="{{ pokemon.id }}">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-gray-600 mb-2">Nº POKéDEX:</label>
+                <input type="number" name="numero_dex" value="{{ pokemon.numero_dex }}" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-gray-600 mb-2">NOME:</label>
+                <input type="text" name="nome" value="{{ pokemon.nome }}" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none uppercase">
+            </div>
+            <div>
+                <label class="block text-gray-600 mb-2">TIPO PRINCIPAL:</label>
+                <input type="text" name="tipo_principal" value="{{ tipos_pt[pokemon.tipo_principal|lower]|default(pokemon.tipo_principal) }}" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-gray-600 mb-2">TIPO SECUNDÁRIO:</label>
+                <input type="text" name="tipo_secundario" value="{{ tipos_pt[pokemon.tipo_secundario|lower]|default(pokemon.tipo_secundario) }}" class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 border-4 border-gray-100">
+            <label class="block text-gray-600 mb-2">ALTERAR IMAGEM:</label>
+            <input type="file" name="capa" class="w-full text-[10px]">
+            <p class="text-[8px] text-gray-400 mt-2">* Deixe em branco para manter a imagem atual.</p>
+        </div>
+
+        <div class="flex justify-between items-center pt-4">
+            <a href="Pokemon.php" class="text-gray-500 hover:underline">VOLTAR</a>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded border-b-4 border-blue-800">
+                ATUALIZAR
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

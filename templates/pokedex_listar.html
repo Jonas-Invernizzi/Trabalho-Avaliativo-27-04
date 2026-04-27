@@ -1,0 +1,62 @@
+{% extends "_base.html" %}
+
+{% block conteudo %}
+{% set tipos_pt = {
+    'normal': 'Normal',
+    'fire': 'Fogo',
+    'water': 'Água',
+    'grass': 'Planta',
+    'electric': 'Elétrico',
+    'ice': 'Gelo',
+    'fighting': 'Lutador',
+    'poison': 'Veneno',
+    'ground': 'Terra',
+    'flying': 'Voador',
+    'psychic': 'Psíquico',
+    'bug': 'Inseto',
+    'rock': 'Pedra',
+    'ghost': 'Fantasma',
+    'dragon': 'Dragão',
+    'dark': 'Sombrio',
+    'steel': 'Aço',
+    'fairy': 'Fada'
+} %}
+<div class="bg-white pokemon-panel p-6 rounded-lg">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl text-gray-800">LISTA DE POKéMONS</h2>
+        <a href="pokemons_inserir.php" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded border-b-4 border-blue-800">
+            + NOVO POKéMON
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for pokemon in pokemons %}
+        <div class="border-4 border-gray-200 p-4 rounded bg-gray-50 hover:bg-white transition flex items-center">
+            <div class="w-24 h-24 mr-4 bg-white border-2 border-gray-300 rounded p-1">
+                <img src="{{ pokemon.imagem_url|default('https://via.placeholder.com/96') }}" alt="{{ pokemon.nome }}" class="w-full h-full object-contain">
+            </div>
+            <div class="flex-grow">
+                <span class="text-gray-400 text-xs">#{{ "%03d"|format(pokemon.numero_dex) }}</span>
+                <h3 class="text-lg uppercase">{{ pokemon.nome }}</h3>
+                <div class="mt-2 space-x-1">
+                    <span class="bg-green-200 text-green-800 px-2 py-1 rounded-full text-[10px]">{{ tipos_pt[pokemon.tipo_principal|lower]|default(pokemon.tipo_principal) }}</span>
+                    {% if pokemon.tipo_secundario %}
+                    <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-[10px]">{{ tipos_pt[pokemon.tipo_secundario|lower]|default(pokemon.tipo_secundario) }}</span>
+                    {% endif %}
+                </div>
+                <div class="mt-4 flex space-x-2">
+                    <a href="pokemons_editar.php?id={{ pokemon.id }}" class="text-blue-500 hover:underline">EDITAR</a>
+                    <a href="pokemons_excluir.php?id={{ pokemon.id }}" class="text-red-500 hover:underline">EXCLUIR</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p class="col-span-full text-center py-10 text-gray-500">NENHUM POKéMON ENCONTRADO.</p>
+        {% endfor %}
+    </div>
+
+    <div class="mt-8 text-center border-t-4 border-gray-100 pt-4">
+        <a href="index.php" class="text-gray-600 hover:underline"><< VOLTAR</a>
+    </div>
+</div>
+{% endblock %}

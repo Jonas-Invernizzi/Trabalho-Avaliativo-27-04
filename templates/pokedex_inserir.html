@@ -1,0 +1,116 @@
+{% extends "_base.html" %}
+
+{% block conteudo %}
+<div class="bg-white pokemon-panel p-8 rounded-lg max-w-2xl mx-auto">
+    <h2 class="text-2xl text-gray-800 mb-6 border-b-4 border-gray-100 pb-2 uppercase text-center">Novo Registro</h2>
+    
+    {% if erro %}
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 text-[10px]">
+        {{ erro }}
+    </div>
+    {% endif %}
+
+    <form action="pokemons_inserir.php" method="post" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="imagem_url_api" id="imagem_url_api">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-gray-600 mb-2">Nº POKéDEX:</label>
+                <input type="number" name="numero_dex" id="numero_dex" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-gray-600 mb-2">NOME:</label>
+                <input type="text" name="nome" id="nome" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none uppercase">
+            </div>
+            <div>
+                <label class="block text-gray-600 mb-2">TIPO PRINCIPAL:</label>
+                <input type="text" name="tipo_principal" id="tipo_principal" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-gray-600 mb-2">TIPO SECUNDÁRIO:</label>
+                <input type="text" name="tipo_secundario" id="tipo_secundario" class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none" placeholder="Opcional">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-gray-600 mb-2">IMAGEM (SPRITE):</label>
+            <input type="file" name="capa" id="capa_upload" class="w-full border-4 border-dashed border-gray-200 p-4 text-[10px]">
+            <div class="mt-4 flex justify-center">
+                <img id="pokemon_image_preview" src="https://via.placeholder.com/96?text=Sem+Imagem" alt="Pré-visualização do Pokémon" class="w-24 h-24 object-contain border-2 border-gray-300 rounded p-1">
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-4">
+            <a href="Pokemon.php" class="text-gray-500 hover:underline">CANCELAR</a>
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded border-b-4 border-green-800">
+                SALVAR
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+const traduçãoTipos = {
+    normal: 'Normal', fire: 'Fogo', water: 'Água', grass: 'Planta',
+    electric: 'Elétrico', ice: 'Gelo', fighting: 'Lutador', poison: 'Veneno',
+    ground: 'Terra', flying: 'Voador', psychic: 'Psíquico', bug: 'Inseto',
+    rock: 'Pedra', ghost: 'Fantasma', dragon: 'Dragão', dark: 'Sombrio',
+    steel: 'Aço', fairy: 'Fada'
+};
+
+document.getElementById('numero_dex').addEventListener('blur', function() {
+    const id = this.value;
+    if (!id) return;
+
+    // Feedback visual de carregamento
+    const nomeInput = document.getElementById('nome');
+    const imagePreview = document.getElementById('pokemon_image_preview');
+    nomeInput.placeholder = "Buscando na PokeAPI...";
+
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Não encontrado');
+            return response.json();
+        })
+        .then(data => {
+            // Preenche os campos
+            nomeInput.value = data.name.toUpperCase();
+            
+            const t1 = data.types[0].type.name;
+            document.getElementById('tipo_principal').value = traduçãoTipos[t1] || t1;
+            
+            if (data.types[1]) {
+                const t2 = data.types[1].type.name;
+                document.getElementById('tipo_secundario').value = traduçãoTipos[t2] || t2;
+            } else {
+                document.getElementById('tipo_secundario').value = '';
+            }
+
+            // Salva a URL da imagem oficial (Artwork)
+            const imgUrl = data.sprites.other['official-artwork'].front_default;
+            document.getElementById('imagem_url_api').value = imgUrl;
+            imagePreview.src = imgUrl; // Atualiza o preview
+
+            console.log("Dados carregados com sucesso!");
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            nomeInput.placeholder = "Pokémon não encontrado";
+            imagePreview.src = "https://via.placeholder.com/96?text=Não+Encontrado"; // Placeholder de erro
+            alert("Atenção: Pokémon não encontrado na base internacional.");
+        });
+});
+
+// Event listener para o upload de arquivo manual
+document.getElementById('capa_upload').addEventListener('change', function(event) {
+    const imagePreview = document.getElementById('pokemon_image_preview');
+    if (event.target.files && event.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+        document.getElementById('imagem_url_api').value = ''; // Limpa a URL da API se um arquivo local for carregado
+    }
+});
+</script>
+{% endblock %}
