@@ -1,4 +1,10 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['treinador_id'])) {
+    header("Location: login.php");
+    exit;
+}
 require_once 'carregar_pdo.php';
 require_once 'carregar_twig.php';
 

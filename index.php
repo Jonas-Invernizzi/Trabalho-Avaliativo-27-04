@@ -1,6 +1,12 @@
 <?php
+session_start();
 require_once 'carregar_pdo.php';
 require_once 'carregar_twig.php';
+
+if (!isset($_SESSION['treinador_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
 try {
     // Busca o total da tabela 'pokedex' conforme o SQL

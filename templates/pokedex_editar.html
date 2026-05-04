@@ -1,68 +1,116 @@
-{% extends "_base.html" %}
+{% extends 'base.html' %}
 
-{% block conteudo %}
-{% set tipos_pt = {
-    'normal': 'Normal',
-    'fire': 'Fogo',
-    'water': 'Água',
-    'grass': 'Planta',
-    'electric': 'Elétrico',
-    'ice': 'Gelo',
-    'fighting': 'Lutador',
-    'poison': 'Veneno',
-    'ground': 'Terra',
-    'flying': 'Voador',
-    'psychic': 'Psíquico',
-    'bug': 'Inseto',
-    'rock': 'Pedra',
-    'ghost': 'Fantasma',
-    'dragon': 'Dragão',
-    'dark': 'Sombrio',
-    'steel': 'Aço',
-    'fairy': 'Fada'
-} %}
-<div class="bg-white pokemon-panel p-8 rounded-lg max-w-2xl mx-auto">
-    <div class="flex items-center justify-center mb-6 space-x-4">
-        <div class="w-16 h-16 border-2 border-gray-200 rounded p-1">
-            <img src="{{ pokemon.imagem_url|default('img/default.png') }}" class="w-full h-full object-contain">
-        </div>
-        <h2 class="text-2xl text-gray-800 uppercase">Editar: {{ pokemon.nome }}</h2>
-    </div>
+{% block title %}Editar Pokémon{% endblock %}
 
-    <form action="pokemons_editar.php" method="post" enctype="multipart/form-data" class="space-y-6">
+{% block content %}
+    <h2>Editar Pokémon: {{ pokemon.nome }}</h2>
+    <form action="pokemons_editar.php" method="post">
         <input type="hidden" name="id" value="{{ pokemon.id }}">
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="block text-gray-600 mb-2">Nº POKéDEX:</label>
-                <input type="number" name="numero_dex" value="{{ pokemon.numero_dex }}" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
+        <div class="form-main-content">
+            <div id="preview-container" class="form-image-preview">
+                <span class="dex-number">CLIQUE NA IMAGEM PARA ALTERNAR SHINY</span>
+                <img id="pokemon_preview" src="{{ pokemon.imagem_url }}" alt="Preview" 
+                     class="pokemon-preview-img {% if pokemon.is_shiny %}is-shiny{% endif %}">
             </div>
-            <div>
-                <label class="block text-gray-600 mb-2">NOME:</label>
-                <input type="text" name="nome" value="{{ pokemon.nome }}" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none uppercase">
-            </div>
-            <div>
-                <label class="block text-gray-600 mb-2">TIPO PRINCIPAL:</label>
-                <input type="text" name="tipo_principal" value="{{ tipos_pt[pokemon.tipo_principal|lower]|default(pokemon.tipo_principal) }}" required class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
-            </div>
-            <div>
-                <label class="block text-gray-600 mb-2">TIPO SECUNDÁRIO:</label>
-                <input type="text" name="tipo_secundario" value="{{ tipos_pt[pokemon.tipo_secundario|lower]|default(pokemon.tipo_secundario) }}" class="w-full border-4 border-gray-200 p-2 focus:border-blue-400 outline-none">
+            <input type="hidden" id="is_shiny_input" name="is_shiny" value="{{ pokemon.is_shiny }}">
+            <div class="form-fields-group">
+                <div class="form-field-half">
+                    <label for="numero_dex">NÚMERO DEX:</label>
+                    <input type="number" id="numero_dex" name="numero_dex" value="{{ pokemon.numero_dex }}" required>
+                </div>
+                <div class="form-field-half">
+                    <label for="nome">NOME:</label>
+                    <input type="text" id="nome" name="nome" value="{{ pokemon.nome }}" required>
+                </div>
+                <div class="form-field-half">
+                    <label for="tipo_principal">TIPO 1:</label>
+                    <input type="text" id="tipo_principal" name="tipo_principal" value="{{ pokemon.tipo_principal }}" required>
+                </div>
+                <div class="form-field-half">
+                    <label for="tipo_secundario">TIPO 2 (opcional):</label>
+                    <input type="text" id="tipo_secundario" name="tipo_secundario" value="{{ pokemon.tipo_secundario }}">
+                </div>
             </div>
         </div>
-
-        <div class="bg-gray-50 p-4 border-4 border-gray-100">
-            <label class="block text-gray-600 mb-2">ALTERAR IMAGEM:</label>
-            <input type="file" name="capa" class="w-full text-[10px]">
-            <p class="text-[8px] text-gray-400 mt-2">* Deixe em branco para manter a imagem atual.</p>
-        </div>
-
-        <div class="flex justify-between items-center pt-4">
-            <a href="Pokemon.php" class="text-gray-500 hover:underline">VOLTAR</a>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded border-b-4 border-blue-800">
-                ATUALIZAR
-            </button>
+        <div>
+            <button type="submit">Salvar Alterações</button>
         </div>
     </form>
-</div>
+
+    <script>
+        let editSprites = { normal: '', shiny: '' };
+        const initialDexNumber = document.getElementById('numero_dex').value;
+        const initialIsShiny = document.getElementById('is_shiny_input').value === "1";
+
+        // Re-use typeTranslations from pokedex_inserir.html if possible, or define here
+        const typeTranslations = {
+            grass: 'Planta', poison: 'Veneno', fire: 'Fogo', flying: 'Voador', water: 'Água', bug: 'Inseto',
+            normal: 'Normal', electric: 'Elétrico', ground: 'Terra', fairy: 'Fada', fighting: 'Lutador',
+            psychic: 'Psíquico', rock: 'Pedra', steel: 'Aço', ice: 'Gelo', ghost: 'Fantasma',
+            dragon: 'Dragão', dark: 'Sombrio'
+        };
+
+        // Fetch sprites for editing to enable shiny toggle
+        if (initialDexNumber) {
+            fetch(`https://pokeapi.co/api/v2/pokemon/${initialDexNumber}`)
+                .then(response => response.json())
+                .then(data => {
+                    editSprites.normal = data.sprites.front_default;
+                    editSprites.shiny = data.sprites.front_shiny;
+                    // Ensure the image src is correct based on initial shiny state
+                    document.getElementById('pokemon_preview').src = initialIsShiny ? editSprites.shiny : editSprites.normal;
+                })
+                .catch(error => console.error('Erro ao buscar sprites para edição:', error));
+        }
+
+        // Update sprites if dex number changes during edit
+        document.getElementById('numero_dex').addEventListener('blur', function() {
+            const dexNumber = this.value;
+            if (!dexNumber) return;
+
+            fetch(`https://pokeapi.co/api/v2/pokemon/${dexNumber}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Pokémon não encontrado');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('nome').value = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+                    if (data.types.length > 0) {
+                        const t1 = data.types[0].type.name;
+                        document.getElementById('tipo_principal').value = typeTranslations[t1] || t1;
+                    }
+                    if (data.types.length > 1) {
+                        const t2 = data.types[1].type.name;
+                        document.getElementById('tipo_secundario').value = typeTranslations[t2] || t2;
+                    } else {
+                        document.getElementById('tipo_secundario').value = '';
+                    }
+                    editSprites.normal = data.sprites.front_default;
+                    editSprites.shiny = data.sprites.front_shiny;
+                    // Update preview based on current shiny state
+                    const currentIsShiny = document.getElementById('is_shiny_input').value === "1";
+                    document.getElementById('pokemon_preview').src = currentIsShiny ? editSprites.shiny : editSprites.normal; // Use stored sprites
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar Pokémon para edição:', error);
+                    // Clear fields and reset preview if Pokémon not found
+                    document.getElementById('nome').value = '';
+                    document.getElementById('tipo_principal').value = '';
+                    document.getElementById('tipo_secundario').value = '';
+                    document.getElementById('pokemon_preview').src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"; // Placeholder
+                    document.getElementById('is_shiny_input').value = 0; // Reset shiny status
+                    document.getElementById('pokemon_preview').classList.remove('is-shiny'); // Remove shiny class
+                });
+        });
+
+        document.getElementById('pokemon_preview').addEventListener('click', function() {
+            const input = document.getElementById('is_shiny_input');
+            const isShiny = input.value === "1";
+            input.value = isShiny ? "0" : "1";
+            
+            // Como na edição já temos a URL, apenas trocamos o caminho
+            this.src = isShiny ? editSprites.normal : editSprites.shiny; // Use stored sprites
+            this.classList.toggle('is-shiny', !isShiny); // Toggle class for shiny effect
+        });
+    </script>
 {% endblock %}

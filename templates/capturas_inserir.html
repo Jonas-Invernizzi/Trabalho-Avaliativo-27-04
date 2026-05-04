@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Captura{% endblock %}
+
+{% block content %}
+    <h2>CAPTURAR {{ pokemon.nome|upper }}</h2>
+    
+    {% if erro %}<p class="error">{{ erro }}</p>{% endif %}
+
+    <form action="capturas_inserir.php?pokedex_id={{ pokemon.id }}" method="post">
+        <div class="form-main-content">
+            <div class="form-image-preview">
+                <img src="{{ pokemon.imagem_url }}" alt="{{ pokemon.nome }}" class="pokemon-preview-img">
+                <span class="dex-number">No. {{ pokemon.numero_dex }}</span>
+            </div>
+            <div class="form-fields-group">
+                <div class="form-field-half"><label>APELIDO:</label><input type="text" name="apelido" placeholder="Dê um nome ao seu Pokémon..."></div>
+                <div class="form-field-half"><label>NÍVEL:</label><input type="number" name="nivel" value="1" min="1" max="100" required></div>
+            </div>
+        </div>
+        <button type="submit">ADICIONAR À MINHA EQUIPE</button>
+    </form>
+    <br><a href="Pokemon.php" class="btn-link">VOLTAR À POKÉDEX</a>
+{% endblock %}

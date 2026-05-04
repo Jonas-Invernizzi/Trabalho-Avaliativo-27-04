@@ -1,6 +1,12 @@
 <?php
+session_start();
 require_once 'carregar_pdo.php';
 
+// Basic check: only allow logged-in users to access their own captures
+if (!isset($_SESSION['treinador_id']) || $_SESSION['treinador_id'] != ($_GET['treinador_id'] ?? 0)) {
+    http_response_code(403); // Forbidden
+    die(json_encode(['error' => 'Acesso não autorizado.']));
+}
 $tid = (int)($_GET['treinador_id'] ?? 0);
 
 if ($tid > 0) {

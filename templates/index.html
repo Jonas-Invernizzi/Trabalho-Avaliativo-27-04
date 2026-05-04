@@ -1,13 +1,11 @@
-{% extends "_base.html" %}
+{% extends "base.html" %}
 
-{% block conteudo %}
-<div class="bg-white pokemon-panel p-10 rounded-lg text-center max-w-2xl mx-auto">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" class="w-64 mx-auto mb-8">
-    <h2 class="text-2xl mb-4">BEM-VINDO, TREINADOR!</h2>
-    <p class="mb-6 leading-relaxed">O SISTEMA ESTÁ PRONTO PARA REGISTRAR NOVAS ESPÉCIES NA SUA JORNADA PELA REGIÃO DE KANTO.</p>
-    <p class="text-sm bg-gray-100 p-2 mb-8 border-l-4 border-red-600">TOTAL DE POKéMONS NA BASE: {{ totalPokemons }}</p>
-    <a href="Pokemon.php" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded border-b-4 border-green-800 text-lg">
-        ABRIR POKéDEX
-    </a>
-</div>
+{% block content %}
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" style="width: 250px; margin-bottom: 20px;">
+    <h2>BEM-VINDO, TREINADOR!</h2>
+    <p class="home-text">O SISTEMA ESTÁ PRONTO PARA REGISTRAR NOVAS ESPÉCIES NA SUA JORNADA.</p>
+    <p class="home-total-box">
+        TOTAL NA POKÉDEX: {{ totalPokemons }}
+    </p>
+    <form action="Pokemon.php"><button type="submit">ABRIR POKÉDEX</button></form>
 {% endblock %}

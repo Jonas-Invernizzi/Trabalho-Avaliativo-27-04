@@ -10,7 +10,8 @@ CREATE TABLE pokedex (
     nome VARCHAR(50) NOT NULL,
     tipo_principal VARCHAR(30) NOT NULL, -- Ex: Fogo, Água, Planta
     tipo_secundario VARCHAR(30) NULL,    -- Pode ser nulo se o Pokémon tiver só um tipo
-    imagem_url VARCHAR(255) NULL         -- URL para exibir a foto do Pokémon no site
+    imagem_url VARCHAR(255) NULL,        -- URL para exibir a foto do Pokémon no site
+    is_shiny TINYINT(1) DEFAULT 0        -- Define se o Pokémon é shiny
 );
 
 -- 3. TABELA DE TREINADORES (Usuários do sistema)
@@ -18,6 +19,7 @@ CREATE TABLE treinadores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
     cidade VARCHAR(50) DEFAULT 'Pallet Town',
     data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

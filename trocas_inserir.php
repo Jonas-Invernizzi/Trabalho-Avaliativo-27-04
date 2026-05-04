@@ -1,15 +1,21 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['treinador_id'])) {
+    header("Location: login.php");
+    exit;
+}
 require_once 'carregar_pdo.php';
 require_once 'carregar_twig.php';
 
 $erro = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $treinador_id = $_POST['treinador_id'] ?? null;
+    $treinador_id = $_SESSION['treinador_id'];
     $pokedex_id_desejado = $_POST['pokedex_id_desejado'] ?? null;
     $captura_id_oferecida = $_POST['captura_id_oferecida'] ?? null;
 
-    if ($treinador_id && $pokedex_id_desejado && $captura_id_oferecida) {
+    if ($pokedex_id_desejado && $captura_id_oferecida) {
         try {
             $sql = "INSERT INTO lista_desejos (treinador_id, pokedex_id_desejado, captura_id_oferecida) 
                     VALUES (:tid, :pid, :cid)";
@@ -29,11 +35,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$treinadores = $pdo->query("SELECT id, nome FROM treinadores ORDER BY nome")->fetchAll();
 $pokedex = $pdo->query("SELECT id, nome FROM pokedex ORDER BY nome")->fetchAll();
 
+// Busca as capturas do treinador logado para oferecer na troca
+$stmt = $pdo->prepare("
+    SELECT c.id, p.nome as especie, c.apelido 
+    FROM capturas c 
+    JOIN pokedex p ON c.pokedex_id = p.id 
+    WHERE c.treinador_id = :tid
+");
+$stmt->execute([':tid' => $_SESSION['treinador_id']]);
+$minhas_capturas = $stmt->fetchAll();
+
 echo $twig->render('trocas_inserir.html', [
-    'treinadores' => $treinadores,
     'pokedex' => $pokedex,
+    'minhas_capturas' => $minhas_capturas,
     'erro' => $erro
 ]);

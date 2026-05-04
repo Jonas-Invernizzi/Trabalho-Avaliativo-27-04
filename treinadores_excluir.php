@@ -1,6 +1,12 @@
 <?php
+session_start();
 require_once 'carregar_pdo.php';
 require_once 'carregar_twig.php';
+
+if (!isset($_SESSION['treinador_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = (int)$_POST['id'];

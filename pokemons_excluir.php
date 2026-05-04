@@ -1,5 +1,11 @@
 <?php
+session_start();
 require('carregar_pdo.php');
+
+if (!isset($_SESSION['treinador_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = (int) $_POST["id"] ?? false;
