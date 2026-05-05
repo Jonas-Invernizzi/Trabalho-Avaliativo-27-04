@@ -1,31 +1,84 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %}Cadastrar Treinador{% endblock %} {%
+block content %}
+<h2 style="text-align: center; margin-top: 20px">NOVO TREINADOR</h2>
 
-{% block title %}Cadastrar Treinador{% endblock %}
+{% if erro %}
+<p class="error">{{ erro }}</p>
+{% endif %}
 
-{% block content %}
-    <h2>Cadastrar Novo Treinador</h2>
-    {% if erro %}
-        <p class="error">{{ erro }}</p>
-    {% endif %}
-    <form action="treinadores_inserir.php" method="post">
-        <div>
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required>
-        </div>
-        <div>
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        <div>
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" required>
-        </div>
-        <div>
-            <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" value="Pallet Town">
-        </div>
-        <div>
-            <button type="submit">Cadastrar</button>
-        </div>
-    </form>
+<form
+  action="treinadores_inserir.php"
+  method="post"
+  enctype="multipart/form-data"
+>
+  <div class="form-main-content">
+    <div class="form-image-preview">
+      <label>FOTO DE PERFIL:</label>
+      <img
+        id="profile_preview"
+        src="img/default-avatar.png"
+        class="profile-preview"
+        onclick="document.getElementById('foto_perfil').click()"
+        title="Clique para alterar"
+      />
+      <input
+        type="file"
+        id="foto_perfil"
+        name="foto_perfil"
+        accept="image/*"
+        style="display: none"
+        onchange="previewImage(this)"
+      />
+      <span style="font-size: 8px; color: var(--fr-blue)"
+        >CLIQUE NA IMAGEM</span
+      >
+    </div>
+
+    <div class="form-fields-group">
+      <div>
+        <label for="nome">NOME:</label>
+        <input type="text" id="nome" name="nome" required />
+      </div>
+      <div>
+        <label for="email">E-MAIL:</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+      <div>
+        <label for="senha">SENHA:</label>
+        <input type="password" id="senha" name="senha" required />
+      </div>
+      <div>
+        <label for="cidade">CIDADE:</label>
+        <input type="text" id="cidade" name="cidade" value="Pallet Town" />
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 20px">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      style="padding: 15px 30px; font-size: 12px"
+    >
+      CADASTRAR TREINADOR
+    </button>
+  </div>
+</form>
+
+<p style="margin-top: 40px; font-size: 10px; text-align: center">
+  JÁ É UM TREINADOR?
+  <a href="login.php" style="color: var(--fr-blue)">FAÇA LOGIN AQUI</a>
+</p>
+
+<script>
+  function previewImage(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("profile_preview").src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
 {% endblock %}

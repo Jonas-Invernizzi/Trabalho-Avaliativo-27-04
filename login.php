@@ -17,7 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($treinador && password_verify($senha, $treinador['senha'])) {
             $_SESSION['treinador_id'] = $treinador['id'];
             $_SESSION['treinador_nome'] = $treinador['nome'];
-            
+            $_SESSION['treinador_foto'] = $treinador['foto_perfil'];
+
             header("Location: index.php");
             exit;
         } else {

@@ -1,41 +1,46 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %}Anunciar Troca{% endblock %} {% block
+content %}
+<h2>ANUNCIAR NOVA TROCA</h2>
 
-{% block title %}Anunciar Troca{% endblock %}
+{% if erro %}
+<p class="error">{{ erro }}</p>
+{% endif %}
 
-{% block content %}
-    <h2>ANUNCIAR NOVA TROCA</h2>
-    
-    {% if erro %}
-        <p class="error">{{ erro }}</p>
-    {% endif %}
+<form action="trocas_inserir.php" method="post">
+  <div class="form-main-content">
+    <div class="form-fields-group">
+      <div class="form-field-half">
+        <label>VOCÊ OFERECE:</label>
+        <select name="captura_id_oferecida" required>
+          <option value="">Selecione um Pokémon seu...</option>
+          {% for captura in minhas_capturas %}
+          <option value="{{ captura.id }}">
+            {{ captura.especie }}{% if captura.apelido %} ({{ captura.apelido
+            }}){% endif %}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <form action="trocas_inserir.php" method="post">
-        <div class="form-main-content">
-            <div class="form-fields-group">
-                <div class="form-field-half">
-                    <label>VOCÊ OFERECE:</label>
-                    <select name="captura_id_oferecida" required>
-                        <option value="">Selecione um Pokémon seu...</option>
-                        {% for captura in minhas_capturas %}
-                            <option value="{{ captura.id }}">{{ captura.especie }}{% if captura.apelido %} ({{ captura.apelido }}){% endif %}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+      <div class="form-field-half">
+        <label>VOCÊ PROCURA:</label>
+        <select name="pokedex_id_desejado" required>
+          <option value="">Selecione o Pokémon desejado...</option>
+          {% for p in pokedex %}
+          <option value="{{ p.id }}">{{ p.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
 
-                <div class="form-field-half">
-                    <label>VOCÊ PROCURA:</label>
-                    <select name="pokedex_id_desejado" required>
-                        <option value="">Selecione o Pokémon desejado...</option>
-                        {% for p in pokedex %}
-                            <option value="{{ p.id }}">{{ p.nome }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-        </div>
+  <div style="text-align: center">
+    <button type="submit" class="btn btn-primary">CRIAR OFERTA DE TROCA</button>
+  </div>
+</form>
 
-        <button type="submit">CRIAR OFERTA DE TROCA</button>
-    </form>
-
-    <br><a href="trocas_listar.php" class="btn-link">VOLTAR AO MERCADO</a>
+<br />
+<div style="text-align: center">
+  <a href="trocas_listar.php" class="btn btn-secondary">VOLTAR AO MERCADO</a>
+</div>
 {% endblock %}

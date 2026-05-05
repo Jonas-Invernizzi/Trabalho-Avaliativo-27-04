@@ -1,27 +1,72 @@
-{% extends "_base.html" %}
-{% block conteudo %}
-<div class="bg-white pokemon-panel p-8 rounded-lg max-w-xl mx-auto uppercase">
-    <h2 class="text-2xl text-gray-800 mb-6 border-b-4 border-gray-100 pb-2 text-center font-bold font-pixel">Editar Treinador</h2>
-    <form action="treinadores_editar.php" method="POST" class="space-y-6">
-        <input type="hidden" name="id" value="{{ treinador.id }}">
-        <div>
-            <label class="block text-gray-500 mb-2">NOME:</label>
-            <input type="text" name="nome" value="{{ treinador.nome }}" required class="w-full border-4 border-gray-200 p-3 focus:border-blue-400 outline-none uppercase">
-        </div>
-        <div>
-            <label class="block text-gray-500 mb-2">EMAIL:</label>
-            <input type="email" name="email" value="{{ treinador.email }}" required class="w-full border-4 border-gray-200 p-3 focus:border-blue-400 outline-none lowercase">
-        </div>
-        <div>
-            <label class="block text-gray-500 mb-2">CIDADE:</label>
-            <input type="text" name="cidade" value="{{ treinador.cidade }}" class="w-full border-4 border-gray-200 p-3 focus:border-blue-400 outline-none uppercase">
-        </div>
-        <div class="flex justify-between items-center pt-4">
-            <a href="treinadores_listar.php" class="text-gray-400 hover:underline text-[10px]">VOLTAR</a>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded border-b-4 border-blue-900">
-                ATUALIZAR
-            </button>
-        </div>
-    </form>
-</div>
+{% extends "base.html" %} {% block content %}
+<h2 style="text-align: center; margin-top: 20px">EDITAR TREINADOR</h2>
+
+<form
+  action="treinadores_editar.php"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <input type="hidden" name="id" value="{{ treinador.id }}" />
+
+  <div class="form-main-content">
+    <div class="form-image-preview">
+      <label>FOTO ATUAL:</label>
+      <img
+        id="profile_preview"
+        src="{{ treinador.foto_perfil }}"
+        class="profile-preview"
+        onclick="document.getElementById('foto_perfil').click()"
+        title="Clique para alterar"
+      />
+      <input
+        type="file"
+        id="foto_perfil"
+        name="foto_perfil"
+        accept="image/*"
+        style="display: none"
+        onchange="previewImage(this)"
+      />
+      <span style="font-size: 8px; color: var(--fr-blue)"
+        >CLIQUE PARA ALTERNAR</span
+      >
+    </div>
+
+    <div class="form-fields-group">
+      <div>
+        <label>NOME:</label>
+        <input type="text" name="nome" value="{{ treinador.nome }}" required />
+      </div>
+      <div>
+        <label>EMAIL:</label>
+        <input
+          type="email"
+          name="email"
+          value="{{ treinador.email }}"
+          required
+        />
+      </div>
+      <div>
+        <label>CIDADE:</label>
+        <input type="text" name="cidade" value="{{ treinador.cidade }}" />
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 20px">
+    <button type="submit" class="btn btn-primary">SALVAR ALTERAÇÕES</button>
+    <a href="treinadores_listar.php" class="btn btn-secondary">VOLTAR</a>
+  </div>
+</form>
+
+<script>
+  function previewImage(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("profile_preview").src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
 {% endblock %}

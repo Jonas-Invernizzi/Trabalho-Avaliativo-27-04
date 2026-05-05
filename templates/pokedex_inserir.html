@@ -1,111 +1,145 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<h2>NOVO POKÉMON</h2>
+{% if erro %}
+<p class="error">{{ erro }}</p>
+{% endif %}
+<form action="pokemons_inserir.php" method="post">
+  <div class="form-main-content">
+    {# Main container for image and fields #}
+    <div id="preview-container" class="form-image-preview">
+      {# Image preview container #}
+      <span class="dex-number">CLIQUE NA IMAGEM PARA ALTERNAR SHINY</span>
+      <img
+        id="pokemon_preview"
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
+        alt="Preview"
+        class="pokemon-preview-img"
+      />
+    </div>
+    <input type="hidden" id="is_shiny_input" name="is_shiny" value="0" />
+    <div class="form-fields-group">
+      <div class="form-field-half">
+        <label>NÚMERO DEX:</label
+        ><input type="number" id="numero_dex" name="numero_dex" required />
+      </div>
+      <div class="form-field-half">
+        <label>NOME:</label><input type="text" id="nome" name="nome" required />
+      </div>
+      <div class="form-field-half">
+        <label>TIPO 1:</label
+        ><input
+          type="text"
+          id="tipo_principal"
+          name="tipo_principal"
+          required
+        />
+      </div>
+      <div class="form-field-half">
+        <label>TIPO 2:</label
+        ><input type="text" id="tipo_secundario" name="tipo_secundario" />
+      </div>
+    </div>
+  </div>
+  <div style="text-align: center">
+    <button type="submit" class="btn btn-primary">GRAVAR</button>
+  </div>
+</form>
+<br />
+<div style="text-align: center">
+  <a href="Pokemon.php" class="btn btn-secondary">VOLTAR</a>
+</div>
 
-{% block content %}
-    <h2>NOVO POKÉMON</h2>
-    {% if erro %}<p class="error">{{ erro }}</p>{% endif %}
-    <form action="pokemons_inserir.php" method="post">
-        <div class="form-main-content"> {# Main container for image and fields #}
-            <div id="preview-container" class="form-image-preview"> {# Image preview container #}
-                <span class="dex-number">CLIQUE NA IMAGEM PARA ALTERNAR SHINY</span>
-                <img id="pokemon_preview" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png" alt="Preview" class="pokemon-preview-img">
-            </div>
-            <input type="hidden" id="is_shiny_input" name="is_shiny" value="0">
-            <div class="form-fields-group">
-                <div class="form-field-half"><label>NÚMERO DEX:</label><input type="number" id="numero_dex" name="numero_dex" required></div>
-                <div class="form-field-half"><label>NOME:</label><input type="text" id="nome" name="nome" required></div>
-                <div class="form-field-half"><label>TIPO 1:</label><input type="text" id="tipo_principal" name="tipo_principal" required></div>
-                <div class="form-field-half"><label>TIPO 2:</label><input type="text" id="tipo_secundario" name="tipo_secundario"></div>
-            </div>
-        </div>
-        <button type="submit">GRAVAR</button>
-    </form>
-    <br><a href="Pokemon.php" class="btn-link">VOLTAR</a>
+<script>
+  let sprites = { normal: "", shiny: "" };
 
-    <script>
-        let sprites = { normal: '', shiny: '' };
+  // Mapeamento de tradução dos tipos da PokeAPI
+  const typeTranslations = {
+    grass: "Planta",
+    poison: "Veneno",
+    fire: "Fogo",
+    flying: "Voador",
+    water: "Água",
+    bug: "Inseto",
+    normal: "Normal",
+    electric: "Elétrico",
+    ground: "Terra",
+    fairy: "Fada",
+    fighting: "Lutador",
+    psychic: "Psíquico",
+    rock: "Pedra",
+    steel: "Aço",
+    ice: "Gelo",
+    ghost: "Fantasma",
+    dragon: "Dragão",
+    dark: "Sombrio",
+  };
 
-        // Mapeamento de tradução dos tipos da PokeAPI
-        const typeTranslations = {
-            grass: 'Planta',
-            poison: 'Veneno',
-            fire: 'Fogo',
-            flying: 'Voador',
-            water: 'Água',
-            bug: 'Inseto',
-            normal: 'Normal',
-            electric: 'Elétrico',
-            ground: 'Terra',
-            fairy: 'Fada',
-            fighting: 'Lutador',
-            psychic: 'Psíquico',
-            rock: 'Pedra',
-            steel: 'Aço',
-            ice: 'Gelo',
-            ghost: 'Fantasma',
-            dragon: 'Dragão',
-            dark: 'Sombrio'
-        };
+  document.getElementById("numero_dex").addEventListener("blur", function () {
+    const dexNumber = this.value;
+    if (!dexNumber) return;
 
-        document.getElementById('numero_dex').addEventListener('blur', function() {
-            const dexNumber = this.value;
-            if (!dexNumber) return;
+    // Busca os dados na PokeAPI
+    fetch(`https://pokeapi.co/api/v2/pokemon/${dexNumber}`)
+      .then((response) => {
+        if (!response.ok) throw new Error("Pokémon não encontrado");
+        return response.json();
+      })
+      .then((data) => {
+        // Preenche o Nome (Capitalizando a primeira letra)
+        document.getElementById("nome").value =
+          data.name.charAt(0).toUpperCase() + data.name.slice(1);
 
-            // Busca os dados na PokeAPI
-            fetch(`https://pokeapi.co/api/v2/pokemon/${dexNumber}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Pokémon não encontrado');
-                    return response.json();
-                })
-                .then(data => {
-                    // Preenche o Nome (Capitalizando a primeira letra)
-                    document.getElementById('nome').value = data.name.charAt(0).toUpperCase() + data.name.slice(1);
-                    
-                    // Preenche o Tipo Principal
-                    if (data.types.length > 0) {
-                        const t1 = data.types[0].type.name;
-                        document.getElementById('tipo_principal').value = typeTranslations[t1] || t1;
-                    }
-                    
-                    // Preenche o Tipo Secundário se existir
-                    if (data.types.length > 1) {
-                        const t2 = data.types[1].type.name;
-                        document.getElementById('tipo_secundario').value = typeTranslations[t2] || t2;
-                    } else {
-                        document.getElementById('tipo_secundario').value = '';
-                    }
+        // Preenche o Tipo Principal
+        if (data.types.length > 0) {
+          const t1 = data.types[0].type.name;
+          document.getElementById("tipo_principal").value =
+            typeTranslations[t1] || t1;
+        }
 
-                    // Armazena as URLs das imagens
-                    sprites.normal = data.sprites.front_default;
-                    sprites.shiny = data.sprites.front_shiny;
-                    document.getElementById('is_shiny_input').value = 0; // Reset shiny status on new pokemon load
+        // Preenche o Tipo Secundário se existir
+        if (data.types.length > 1) {
+          const t2 = data.types[1].type.name;
+          document.getElementById("tipo_secundario").value =
+            typeTranslations[t2] || t2;
+        } else {
+          document.getElementById("tipo_secundario").value = "";
+        }
 
-                    // Preenche a imagem de preview vinda da API
-                    const previewContainer = document.getElementById('preview-container');
-                    const previewImg = document.getElementById('pokemon_preview');
-                    previewImg.src = sprites.normal; // Use the stored normal sprite
-                    previewContainer.style.display = 'block';
-                })
-                .catch(error => {
-                    console.error('Erro ao buscar Pokémon:', error);
-                    // Clear fields and reset preview if Pokémon not found
-                    document.getElementById('nome').value = '';
-                    document.getElementById('tipo_principal').value = '';
-                    document.getElementById('tipo_secundario').value = '';
-                    document.getElementById('pokemon_preview').src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"; // Placeholder
-                    document.getElementById('is_shiny_input').value = 0; // Reset shiny status
-                    document.getElementById('pokemon_preview').style.filter = 'none';
-                });
-        });
+        // Armazena as URLs das imagens
+        sprites.normal = data.sprites.front_default;
+        sprites.shiny = data.sprites.front_shiny;
+        document.getElementById("is_shiny_input").value = 0; // Reset shiny status on new pokemon load
 
-        // Lógica para clicar na imagem e virar Shiny
-        document.getElementById('pokemon_preview').addEventListener('click', function() {
-            const input = document.getElementById('is_shiny_input');
-            const isShiny = input.value === "1";
-            
-            // Inverte o valor
-            input.value = isShiny ? "0" : "1";
-            this.src = isShiny ? sprites.normal : sprites.shiny;
-            this.classList.toggle('is-shiny', !isShiny); // Toggle class for shiny effect
-        });
-    </script>
+        // Preenche a imagem de preview vinda da API
+        const previewContainer = document.getElementById("preview-container");
+        const previewImg = document.getElementById("pokemon_preview");
+        previewImg.src = sprites.normal; // Use the stored normal sprite
+        previewContainer.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar Pokémon:", error);
+        // Clear fields and reset preview if Pokémon not found
+        document.getElementById("nome").value = "";
+        document.getElementById("tipo_principal").value = "";
+        document.getElementById("tipo_secundario").value = "";
+        document.getElementById("pokemon_preview").src =
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"; // Placeholder
+        document.getElementById("is_shiny_input").value = 0; // Reset shiny status
+        document.getElementById("pokemon_preview").style.filter = "none";
+      });
+  });
+
+  // Lógica para clicar na imagem e virar Shiny
+  document
+    .getElementById("pokemon_preview")
+    .addEventListener("click", function () {
+      const input = document.getElementById("is_shiny_input");
+      const isShiny = input.value === "1";
+
+      // Inverte o valor
+      input.value = isShiny ? "0" : "1";
+      this.src = isShiny ? sprites.normal : sprites.shiny;
+      this.classList.toggle("is-shiny", !isShiny); // Toggle class for shiny effect
+    });
+</script>
 {% endblock %}

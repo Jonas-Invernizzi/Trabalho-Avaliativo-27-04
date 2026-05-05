@@ -1,14 +1,14 @@
-{% extends "_base.html" %} {% block conteudo %} {% set estilos ={ 'acao':'Ação',
+{% extends "base.html" %} {% block content %} {% set estilos ={ 'acao':'Ação',
 'tiro': "Tiro", 'rpg': "RPG", }%}
 
 <h3>Lista de Jogos</h3>
-<hr>
+<hr />
 Hoje: {{ datas.data }}
-<br>
+<br />
 A Próxima Sexta: {{datas.proximaSexta}}
-<br>
+<br />
 Daqui a 20 dias será: {{ datas.dataVinteDias }}
-<hr>
+<hr />
 
 <a href="jogos_inserir.php">➕ Novo Jogo</a>
 <br /><br />
@@ -26,10 +26,10 @@ Daqui a 20 dias será: {{ datas.dataVinteDias }}
     <td>{{jogo.nome }}</td>
     <td>{{estilos[jogo.estilo] ?? "Não Encontrado"}}</td>
     <td><img src="img/{{ jogo.capa }}" /></td>
-    <td>{{  jogo.lancamento }}</td>
+    <td>{{ jogo.lancamento }}</td>
     <td><a href="jogos_editar.php?id={{ jogo.id }}">🧻</a></td>
     <td><a href="jogos_excluir.php?id={{ jogo.id }}">💩</a></td>
-    </tr>
+  </tr>
   {% endfor %}
 </table>
 

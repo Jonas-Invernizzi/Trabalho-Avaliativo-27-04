@@ -1,266 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sistema Pokémon{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --pk-bg: #eef2f7;
-            --pk-surface: #fdfdfd;
-            --pk-border: #e2e8f0;
-            --pk-text: #1f2937;
-            --pk-text-muted: #718096;
-            --pk-accent: #ffcb05;
-            --pk-red: #ff3e3e;
-            --pk-red-dark: #c53030;
-            --pk-blue: #4299e1;
-            --pk-green: #4caf50;
-            --pk-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --n64-dark-blue: #f8fafc;
-            --n64-gray: #f1f5f9;
-        }
-        body { 
-            font-family: 'Montserrat', sans-serif;
-            margin: 0; 
-            padding: 0; 
-            background: var(--pk-bg);
-            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: var(--pk-text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            line-height: 1.5;
-        }
-        .container { 
-            width: 90%; 
-            max-width: 1000px; 
-            margin: 40px auto; 
-            background-color: var(--pk-surface); 
-            padding: 40px; 
-            border-radius: 16px; 
-            box-shadow: var(--pk-shadow);
-            border: 1px solid var(--pk-border);
-            text-align: center;
-        }
-        header { 
-            width: 100%;
-            background: linear-gradient(90deg, var(--pk-red) 0%, var(--pk-red-dark) 100%);
-            border-bottom: 6px solid rgba(0,0,0,0.15);
-            color: #fff; 
-            padding: 18px 40px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-            position: relative;
-            z-index: 10;
-        }
-        header h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; text-shadow: 1px 1px 0px rgba(0,0,0,0.2); }
-        header nav a { 
-            color: #fff; 
-            text-decoration: none; 
-            margin-left: 15px; 
-            font-weight: 600; 
-            letter-spacing: 1px;
-            transition: all 0.2s ease; 
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-        header nav a:hover { color: var(--pk-accent); transform: scale(1.1); }
-        .user-info { color: #fff; z-index: 3; font-size: 0.8rem; letter-spacing: 0.5px; }
-        .user-info a { 
-            color: var(--pk-accent); 
-            text-decoration: none; 
-            font-weight: 700; 
-            margin-left: 10px; 
-            background: rgba(255,255,255,0.15); 
-            padding: 6px 16px; 
-            border-radius: 99px; 
-            transition: all 0.2s; 
-        }
-        .user-info a:hover { background: var(--pk-accent); color: var(--pk-text); }
-        .error { color: var(--pk-red); margin-bottom: 15px; font-weight: bold; }
-        
-        form div { margin-bottom: 10px; }
-        form label { display: block; margin-bottom: 5px; font-weight: 700; color: var(--pk-blue); text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
-        form input[type="text"], form input[type="email"], form input[type="password"], form input[type="number"], form select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--pk-border);
-            border-radius: 8px;
-            box-sizing: border-box;
-            background: #ffffff;
-            color: var(--pk-text);
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        form input:focus { border-color: var(--pk-blue); outline: none; box-shadow: 0 0 10px rgba(42, 117, 187, 0.1); }
-        form input[type="checkbox"] { margin-right: 8px; transform: scale(1.1); }
-        form button {
-            background: var(--pk-blue);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s;
-        }
-        form button:hover { transform: translateY(-3px); background: #3482cc; box-shadow: 0 8px 20px rgba(52, 130, 204, 0.4); }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}POKÉMON FIRE RED EDITION{% endblock %}</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="index.php">HOME</a>
+      <a href="Pokemon.php">POKÉDEX</a>
+      <a href="treinadores_listar.php">TREINADORES</a>
+      <a href="trocas_listar.php">TROCAS</a>
 
-        .pokemon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; margin-top: 30px; }
-        .pokemon-card { 
-            background: #ffffff;
-            border: 1px solid var(--pk-border);
-            padding: 20px; 
-            border-radius: 12px; 
-            text-align: center; 
-            position: relative; 
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .pokemon-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-color: var(--pk-blue);
-        }
-        .pokemon-card img { width: 120px; height: 120px; object-fit: contain; margin-bottom: 15px; transition: transform 0.3s ease; }
-        .pokemon-card:hover img { transform: scale(1.05); }
-        .pokemon-card .shiny-star {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.2rem;
-            color: var(--pk-accent);
-            text-shadow: 0 0 5px orange;
-            animation: twinkle 1.5s infinite ease-in-out;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.2); }
-        }
-        .pokemon-card .dex-number { font-size: 0.75rem; font-weight: 600; color: var(--pk-text-muted); display: block; margin-bottom: 4px; }
-        .pokemon-card .pokemon-name { font-size: 1.15rem; font-weight: 700; color: var(--pk-text); margin: 0; }
-        .pokemon-card .type-tag { 
-            display: inline-block; 
-            padding: 4px 10px; 
-            border-radius: 9999px; 
-            font-size: 0.65rem; 
-            background: #edf2f7; 
-            color: #4b5563;
-            margin-top: 8px;
-            text-transform: uppercase;
-            font-weight: bold;
-            border: 1px solid var(--pk-border);
-        }
-        .caught-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--pk-blue);
-            color: white;
-            font-size: 0.6rem;
-            font-weight: 900;
-            padding: 4px 10px;
-            border-radius: 99px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 6px rgba(49, 130, 206, 0.3);
-        }
+      {% if session.treinador_id %}
+      <a href="treinadores_editar.php?id={{ session.treinador_id }}"
+        >EDITAR PERFIL</a
+      >
+      <span
+        style="display: inline-flex; align-items: center; margin-left: 15px"
+      >
+        <img
+          src="{{ session.treinador_foto|default('img/default-avatar.png') }}"
+          style="
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid white;
+            margin-right: 5px;
+          "
+        />
+      </span>
+      <a href="logout.php" style="color: #ffde00"
+        >SAIR DA CONTA ({{ session.treinador_nome|upper }})</a
+      >
+      {% else %}
+      <a href="login.php">LOGIN</a>
+      <a href="treinadores_inserir.php">CADASTRO</a>
+      {% endif %}
+    </nav>
 
-        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--pk-border); }
-        th { background-color: #e9ecef; color: var(--pk-text-muted); padding: 12px 16px; text-align: left; text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid var(--pk-border); }
-        td { padding: 16px; border-bottom: 1px solid var(--pk-border); color: var(--pk-text); font-size: 0.875rem; background: #fff; }
-        tr:last-child td { border-bottom: none; }
-        .actions a { margin-right: 12px; text-decoration: none; color: var(--pk-blue); font-weight: 600; font-size: 0.8125rem; transition: color 0.2s; }
-        .actions a:hover { color: var(--pk-accent); }
-        .btn-link { color: var(--pk-blue); text-decoration: none; font-weight: 600; font-size: 0.875rem; }
-        .btn-link:hover { text-decoration: underline; }
-
-        /* Form Layout Specifics */
-        .form-main-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px; /* Space between image preview and fields */
-            align-items: flex-start;
-            margin-bottom: 30px;
-            text-align: left; /* Align content within this block to left */
-        }
-
-        .form-image-preview {
-            flex: 0 0 auto;
-            width: 200px; /* Fixed width for the preview */
-            text-align: center;
-            padding: 20px;
-            border-radius: 12px;
-            background: var(--pk-surface);
-            border: 1px dashed var(--pk-border);
-            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
-        }
-        .form-image-preview .dex-number {
-            font-size: 0.7rem;
-            color: var(--pk-text-muted);
-            margin-bottom: 10px;
-        }
-
-        .form-fields-group {
-            flex: 1; /* Take remaining space */
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px; /* Space between fields */
-        }
-
-        .form-field-half {
-            flex: 0 0 calc(50% - 10px); /* Two fields per line with gap */
-            box-sizing: border-box;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .form-main-content {
-                flex-direction: column;
-                align-items: center;
-            }
-            .form-image-preview {
-                width: 100%;
-                margin-bottom: 20px;
-            }
-            .form-fields-group {
-                width: 100%;
-            }
-            .form-field-half {
-                flex: 0 0 100%; /* One field per line on small screens */
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Sistema Pokémon</h1>
-        <nav>
-            <a href="index.php">Home</a>
-            <a href="Pokemon.php">Pokédex</a>
-            <a href="treinadores_listar.php">Treinadores</a>
-            <a href="trocas_listar.php">Trocas</a>
-        </nav>
-        <div class="user-info">
-            {% if session.treinador_id %}
-                TREINADOR: {{ session.treinador_nome|upper }} | <a href="logout.php">SAIR</a>
-            {% else %}
-                <a href="login.php">LOGIN</a> |
-                <a href="treinadores_inserir.php">CADASTRAR</a>
-            {% endif %}
-        </div>
-    </header>
-    <div class="container">
-        {% block content %}{% endblock %}
+    <div class="main-container">
+      <main>{% block content %}{% endblock %}</main>
     </div>
-</body>
+
+    <footer>
+      <p>&copy; 2026 POKÉMON FIRE RED SYSTEM - TODAS AS INSÍGNIAS RESERVADAS</p>
+    </footer>
+  </body>
 </html>

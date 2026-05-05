@@ -21,6 +21,7 @@ CREATE TABLE treinadores (
     email VARCHAR(100) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
     cidade VARCHAR(50) DEFAULT 'Pallet Town',
+    foto_perfil VARCHAR(255) DEFAULT 'img/default-avatar.png',
     data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

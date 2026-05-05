@@ -1,0 +1,315 @@
+/* Importação da fonte clássica de 8-bits */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --fr-red: #e83030; /* Vermelho clássico da Pokédex FireRed */
+  --fr-blue: #0088e0; /* Azul dos menus/botões */
+  --fr-green: #58c868; /* Verde de confirmação */
+  --fr-light: #f8f8f8; /* Fundo claro dos menus */
+  --fr-dark: #404040; /* Texto cinza escuro */
+  --fr-border: #787878; /* Borda padrão */
+  --fr-menu-bg: #ffffff;
+}
+
+body {
+  background-color: #e8e8e8; /* Cinza claro para o fundo da página */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--fr-dark);
+  font-family: "Press Start 2P", cursive;
+  font-size: 12px; /* Aumentado levemente para melhor legibilidade */
+  line-height: 1.6;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh; /* Necessário para o rodapé grudar no fim */
+}
+
+/* Container que simula a tela do GBA */
+.main-container {
+  width: fit-content;
+  min-width: 320px;
+  max-width: 95%;
+  border: 4px solid var(--fr-border);
+  background: var(--fr-menu-bg);
+  padding: 30px;
+  box-shadow: 0 10px 0 #505050;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--fr-blue);
+  text-shadow: none;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Estilização das "Cartas" de Pokémon baseadas na Tabela pokedex */
+.pokedex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.pokemon-card {
+  background: #ffffff;
+  border: 2px solid var(--fr-border);
+  padding: 15px;
+  text-align: center;
+  transition: background 0.2s;
+  box-shadow: 4px 4px 0px #eee;
+  border-radius: 8px;
+}
+
+.pokemon-card:hover {
+  background: #f0f8ff;
+  border-color: var(--fr-blue);
+}
+
+.pokemon-card img {
+  width: 96px; /* Tamanho original dos sprites de GBC/N64 */
+  height: 96px;
+  image-rendering: pixelated;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+/* Tipos de Pokémon (Referente a tipo_principal no SQL) */
+.type-badge {
+  display: inline-block;
+  padding: 5px 8px;
+  font-size: 8px;
+  margin-top: 5px;
+  border: 1px solid #fff;
+  color: #fff;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0px #000;
+}
+
+/* Cores Oficiais por Tipo */
+.type-normal {
+  background-color: #a8a77a;
+}
+.type-fogo {
+  background-color: #ee8130;
+}
+.type-agua {
+  background-color: #6390f0;
+}
+.type-eletrico {
+  background-color: #f7d02c;
+  color: #000;
+}
+.type-planta {
+  background-color: #7ac74c;
+}
+.type-gelo {
+  background-color: #96d9d6;
+  color: #000;
+}
+.type-lutador {
+  background-color: #c22e28;
+}
+.type-veneno {
+  background-color: #a33ea1;
+}
+.type-terra {
+  background-color: #e2bf65;
+}
+.type-voador {
+  background-color: #a98ff3;
+}
+.type-psiquico {
+  background-color: #f95587;
+}
+.type-inseto {
+  background-color: #a6b91a;
+}
+.type-pedra {
+  background-color: #b6a136;
+}
+.type-fantasma {
+  background-color: #735797;
+}
+.type-dragao {
+  background-color: #6f35fc;
+}
+.type-sombrio {
+  background-color: #705746;
+}
+.type-aço {
+  background-color: #b7b7ce;
+  color: #000;
+}
+.type-fada {
+  background-color: #d685ad;
+}
+
+/* Layout para formulários com imagem lateral (Estilo Pokédex) */
+.form-main-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.form-image-preview {
+  flex: 0 0 auto;
+  text-align: center;
+  border: 2px dashed var(--fr-border);
+  padding: 15px;
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+
+.form-fields-group {
+  flex: 1;
+  min-width: 250px;
+  text-align: left;
+}
+
+/* Botões estilo Pokémon FireRed */
+.btn {
+  font-family: "Press Start 2P", cursive;
+  padding: 10px 15px;
+  border: 2px solid #303030;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 8px;
+  margin: 5px;
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  border-radius: 12px;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+/* Cor do botão A (Verde) */
+.btn-primary {
+  background-color: var(--fr-blue);
+}
+/* Cor do botão B (Vermelho) */
+.btn-secondary {
+  background-color: var(--fr-red);
+}
+/* Cor dos botões C (Amarelo) */
+.btn-action {
+  background-color: var(--fr-green);
+}
+
+/* Tabelas para Inventário e Treinadores */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  border: 2px solid var(--fr-border);
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th {
+  background-color: var(--fr-red);
+  padding: 15px;
+  border: 1px solid var(--fr-border);
+  font-size: 10px;
+  color: white;
+}
+
+td {
+  padding: 12px;
+  border: 1px solid #eee;
+  text-align: center;
+  color: var(--fr-dark);
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Formulários (Inputs) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select {
+  background: white;
+  border: 2px solid #ccc;
+  color: var(--fr-dark);
+  padding: 10px;
+  font-family: "Press Start 2P", cursive;
+  font-size: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--fr-blue);
+}
+
+/* Barra de Navegação / Menu */
+nav {
+  background: var(--fr-red); /* Revertido para Vermelho FireRed */
+  width: 100%;
+  padding: 20px 0; /* Tamanho aumentado */
+  border-bottom: 4px solid #a02020;
+  margin-bottom: 30px;
+  text-align: center;
+  border-radius: 0 0 10px 10px;
+  flex-shrink: 0;
+}
+
+nav a {
+  color: #fff; /* Texto branco para o fundo vermelho */
+  margin: 0 15px;
+  text-decoration: none;
+  font-size: 10px;
+  text-shadow: 1px 1px #501010;
+}
+
+/* Estilo para Itens do Inventário */
+.item-slot {
+  border: 2px solid var(--fr-border);
+  background: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+/* Painéis específicos usados nos templates */
+.pokemon-panel {
+  background: white !important;
+  border: 3px solid var(--fr-border);
+  box-shadow: 4px 4px 0px #eee;
+  color: var(--fr-dark) !important;
+}
