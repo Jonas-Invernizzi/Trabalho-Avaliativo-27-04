@@ -19,9 +19,10 @@
                     <td>{{ treinador.email }}</td>
                     <td>{{ treinador.cidade|upper }}</td>
                     <td class="actions">
-                        {% if treinador.id == session.treinador_id %}
-                        <a href="treinadores_editar.php?id={{ treinador.id }}">Editar</a>
-                        <a href="treinadores_excluir.php?id={{ treinador.id }}" onclick="return confirm('Deseja realmente excluir este treinador?')">Excluir</a>
+                        <a href="treinador_perfil.php?id={{ treinador.id }}" class="btn-link">[VER PERFIL]</a>
+                        {% if session.treinador_id == treinador.id %}
+                            <a href="treinadores_editar.php?id={{ treinador.id }}" class="btn-link">[EDITAR]</a>
+                            <a href="treinadores_excluir.php?id={{ treinador.id }}" class="btn-link" onclick="return confirm('Deseja realmente excluir este treinador?')">[EXCLUIR]</a>
                         {% endif %}
                     </td>
                 </tr>

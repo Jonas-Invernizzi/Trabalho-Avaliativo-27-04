@@ -3,33 +3,36 @@
 {% block title %}Pokédex{% endblock %}
 
 {% block content %}
-    <h2>Pokédex</h2>
-    {% if session.treinador_id %}
-        <p><a href="pokemons_inserir.php">Adicionar Novo Pokémon</a></p>
-    {% endif %}
+    <div class="trade-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>POKéDEX</h2>
+        {% if session.treinador_id %}
+            <a href="pokemons_inserir.php" class="btn-link">[+] ADICIONAR NOVO</a>
+        {% endif %}
+    </div>
+
     <div class="pokemon-grid">
         {% for pokemon in pokemons %}
             <div class="pokemon-card">
-                {% if pokemon.capturado > 0 %} {# Display badge if caught #}
-                    <div class="caught-badge" title="Você possui este Pokémon!">Catch!</div>
+                {% if pokemon.capturado > 0 %}
+                    <div class="caught-badge">GOTCHA!</div>
                 {% endif %}
-                <img src="{{ pokemon.imagem_url }}" alt="{{ pokemon.nome }}">
-                {% if pokemon.is_shiny %}
-                    <span class="shiny-star">⭐</span>
-                {% endif %}
-                <span class="dex-number">No. {{ pokemon.numero_dex }}</span>
-                <p class="pokemon-name">{{ pokemon.nome|upper }}</p>
-                <div class="type-tag">
-                    {{ pokemon.tipo_principal|upper }} 
+                
+                <img src="{{ pokemon.imagem_url }}" alt="{{ pokemon.nome }}" style="width: 96px; image-rendering: pixelated;">
+                
+                <span class="dex-number">#{{ "%03d"|format(pokemon.numero_dex) }}</span>
+                <strong class="pokemon-name">{{ pokemon.nome|upper }}</strong>
+                
+                <div>
+                    <span class="type-tag">{{ pokemon.tipo_principal|upper }}</span>
                     {% if pokemon.tipo_secundario %}
-                        / {{ pokemon.tipo_secundario|upper }}
+                        <span class="type-tag">{{ pokemon.tipo_secundario|upper }}</span>
                     {% endif %}
                 </div>
+
                 {% if session.treinador_id %}
                     <div class="actions">
-                        <a href="capturas_inserir.php?pokedex_id={{ pokemon.id }}" class="btn-link" style="color: var(--pk-green);">Capturar</a>
-                        <a href="pokemons_editar.php?id={{ pokemon.id }}">Editar</a>
-                        <a href="pokemons_excluir.php?id={{ pokemon.id }}" onclick="return confirm('Tem certeza que deseja excluir este Pokémon?');">Excluir</a>
+                        <a href="capturas_inserir.php?pokedex_id={{ pokemon.id }}">CAPTURAR</a>
+                        <a href="pokemons_editar.php?id={{ pokemon.id }}">EDITAR</a>
                     </div>
                 {% endif %}
             </div>

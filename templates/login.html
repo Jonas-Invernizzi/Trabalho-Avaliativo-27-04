@@ -1,34 +1,22 @@
-{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block content
-%}
-<div class="auth-container">
-  <h2 style="text-align: center; margin-top: 40px">LOGIN</h2>
-  {% if erro %}
-  <p class="error">{{ erro }}</p>
-  {% endif %}
-  <form action="login.php" method="post">
-    <div>
-      <label for="email">E-MAIL:</label>
-      <input type="email" id="email" name="email" required />
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="pokemon-panel" style="max-width: 500px; margin: auto;">
+        <h2>LOGIN DO SISTEMA</h2>
+        {% if erro %}<p style="color: red; font-size: 0.6rem;">{{ erro }}</p>{% endif %}
+        <form action="login.php" method="post" style="display: flex; flex-direction: column; gap: 20px;">
+            <label>E-MAIL:</label>
+            <input type="email" name="email" required>
+            
+            <label>SENHA:</label>
+            <input type="password" name="senha" required>
+            
+            <button type="submit">ENTRAR</button>
+        </form>
+        <p style="margin-top: 20px; font-size: 0.6rem;">
+            NOVO POR AQUI? <a href="treinadores_inserir.php" class="btn-link">CADASTRE-SE</a>
+        </p>
     </div>
-    <div>
-      <label for="senha">SENHA:</label>
-      <input type="password" id="senha" name="senha" required />
-    </div>
-    <div style="text-align: center; margin-top: 30px">
-      <button
-        type="submit"
-        class="btn btn-primary"
-        style="padding: 15px 30px; font-size: 12px"
-      >
-        Entrar
-      </button>
-    </div>
-  </form>
-  <p style="margin-top: 40px; font-size: 10px; text-align: center">
-    AINDA NÃO É UM TREINADOR?
-    <a href="treinadores_inserir.php" style="color: var(--fr-blue)"
-      >CADASTRE-SE AQUI</a
-    >
-  </p>
-</div>
 {% endblock %}

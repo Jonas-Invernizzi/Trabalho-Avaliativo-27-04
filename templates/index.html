@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" style="width: 250px; margin-bottom: 20px;">
-    <h2>BEM-VINDO, TREINADOR!</h2>
-    <p class="home-text">O SISTEMA ESTÁ PRONTO PARA REGISTRAR NOVAS ESPÉCIES NA SUA JORNADA.</p>
-    <p class="home-total-box">
-        TOTAL NA POKÉDEX: {{ totalPokemons }}
-    </p>
-    <form action="Pokemon.php"><button type="submit">ABRIR POKÉDEX</button></form>
+    <div class="pokemon-panel" style="text-align: center;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" style="width: 300px; margin-bottom: 30px;">
+        <h2 style="border:none; text-align:center;">OLÁ, TREINADOR!</h2>
+        <p style="line-height: 2;">ESTE MUNDO É HABITADO POR CRIATURAS CHAMADAS POKéMON!</p>
+        <div class="pokemon-panel" style="background: var(--poke-dark); color: var(--poke-yellow); margin: 20px 0;">
+            TOTAL REGISTRADO NA DEX: {{ totalPokemons }}
+        </div>
+        <form action="Pokemon.php"><button type="submit">ACESSAR POKéDEX</button></form>
+    </div>
 {% endblock %}

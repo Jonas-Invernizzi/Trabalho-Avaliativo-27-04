@@ -6,7 +6,7 @@ USE sistema_pokemon;
 -- Aqui cadastramos a "base". Ex: O Pikachu é o número 25, tipo Elétrico.
 CREATE TABLE pokedex (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    numero_dex INT UNIQUE NOT NULL,      -- Número oficial na Pokédex
+    numero_dex INT NOT NULL,             -- Número oficial na Pokédex (Pode repetir para Shinies)
     nome VARCHAR(50) NOT NULL,
     tipo_principal VARCHAR(30) NOT NULL, -- Ex: Fogo, Água, Planta
     tipo_secundario VARCHAR(30) NULL,    -- Pode ser nulo se o Pokémon tiver só um tipo
@@ -20,7 +20,7 @@ CREATE TABLE treinadores (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
-    cidade VARCHAR(50) DEFAULT 'Pallet Town',
+    cidade VARCHAR(50) NULL,
     foto_perfil VARCHAR(255) DEFAULT 'img/default-avatar.png',
     data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -47,9 +47,18 @@ CREATE TABLE inventario (
     FOREIGN KEY (treinador_id) REFERENCES treinadores(id) ON DELETE CASCADE
 );
 
--- 6. TABELA LISTA DE DESEJOS (O motor do sistema de trocas)
--- Relaciona: Quem quer + Que espécie quer + O que oferece do seu próprio inventário
+-- 6. TABELA LISTA DE DESEJOS (Apenas intenção de ter)
 CREATE TABLE lista_desejos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    treinador_id INT NOT NULL,
+    pokedex_id INT NOT NULL,
+    FOREIGN KEY (treinador_id) REFERENCES treinadores(id) ON DELETE CASCADE,
+    FOREIGN KEY (pokedex_id) REFERENCES pokedex(id) ON DELETE CASCADE
+);
+
+-- 7. TABELA OFERTAS DE TROCA (O motor do mercado de trocas)
+-- Relaciona: Quem criou + O que quer + O que oferece das suas capturas
+CREATE TABLE ofertas_troca (
     id INT AUTO_INCREMENT PRIMARY KEY,
     treinador_id INT NOT NULL,              -- Quem criou o anúncio
     pokedex_id_desejado INT NOT NULL,       -- Espécie que ele QUER (da pokedex)
@@ -89,4 +98,4 @@ INSERT INTO capturas (treinador_id, pokedex_id, apelido, nivel) VALUES (3, 1, 'B
 
 -- Criando um Desejo de Troca
 -- Ash (ID 1) quer um Bulbasaur (ID 1 na pokedex) e oferece o seu Pikachu (ID 1 nas capturas)
-INSERT INTO lista_desejos (treinador_id, pokedex_id_desejado, captura_id_oferecida) VALUES (1, 1, 1);
+INSERT INTO ofertas_troca (treinador_id, pokedex_id_desejado, captura_id_oferecida) VALUES (1, 1, 1);

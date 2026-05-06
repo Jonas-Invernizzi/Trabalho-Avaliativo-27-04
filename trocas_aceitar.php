@@ -15,7 +15,7 @@ if ($id_troca > 0) {
         $pdo->beginTransaction();
 
         // 1. Buscar detalhes da oferta de troca
-        $stmt = $pdo->prepare("SELECT * FROM lista_desejos WHERE id = :id");
+        $stmt = $pdo->prepare("SELECT * FROM ofertas_troca WHERE id = :id");
         $stmt->execute([':id' => $id_troca]);
         $troca = $stmt->fetch();
 
@@ -48,7 +48,7 @@ if ($id_troca > 0) {
         $stmt->execute([':novo_dono' => $troca['treinador_id'], ':cid' => $minha_captura['id']]);
 
         // 5. Remover a oferta da lista de desejos
-        $stmt = $pdo->prepare("DELETE FROM lista_desejos WHERE id = :id");
+        $stmt = $pdo->prepare("DELETE FROM ofertas_troca WHERE id = :id");
         $stmt->execute([':id' => $id_troca]);
 
         $pdo->commit();

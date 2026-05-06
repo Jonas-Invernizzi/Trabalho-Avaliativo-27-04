@@ -1,72 +1,29 @@
-{% extends "base.html" %} {% block content %}
-<h2 style="text-align: center; margin-top: 20px">EDITAR TREINADOR</h2>
-
-<form
-  action="treinadores_editar.php"
-  method="POST"
-  enctype="multipart/form-data"
->
-  <input type="hidden" name="id" value="{{ treinador.id }}" />
-
-  <div class="form-main-content">
-    <div class="form-image-preview">
-      <label>FOTO ATUAL:</label>
-      <img
-        id="profile_preview"
-        src="{{ treinador.foto_perfil }}"
-        class="profile-preview"
-        onclick="document.getElementById('foto_perfil').click()"
-        title="Clique para alterar"
-      />
-      <input
-        type="file"
-        id="foto_perfil"
-        name="foto_perfil"
-        accept="image/*"
-        style="display: none"
-        onchange="previewImage(this)"
-      />
-      <span style="font-size: 8px; color: var(--fr-blue)"
-        >CLIQUE PARA ALTERNAR</span
-      >
-    </div>
-
-    <div class="form-fields-group">
-      <div>
-        <label>NOME:</label>
-        <input type="text" name="nome" value="{{ treinador.nome }}" required />
-      </div>
-      <div>
-        <label>EMAIL:</label>
-        <input
-          type="email"
-          name="email"
-          value="{{ treinador.email }}"
-          required
-        />
-      </div>
-      <div>
-        <label>CIDADE:</label>
-        <input type="text" name="cidade" value="{{ treinador.cidade }}" />
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align: center; margin-top: 20px">
-    <button type="submit" class="btn btn-primary">SALVAR ALTERAÇÕES</button>
-    <a href="treinadores_listar.php" class="btn btn-secondary">VOLTAR</a>
-  </div>
-</form>
-
-<script>
-  function previewImage(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        document.getElementById("profile_preview").src = e.target.result;
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
-</script>
+{% extends "base.html" %}
+{% block content %}
+<div class="pokemon-panel" style="max-width: 600px; margin: auto;">
+    <h2>EDITAR PERFIL</h2>
+    <form action="treinadores_editar.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+        <input type="hidden" name="id" value="{{ treinador.id }}">
+        
+        <div>
+            <label>NOME:</label><br>
+            <input type="text" name="nome" value="{{ treinador.nome }}" required style="width: 100%;">
+        </div>
+        <div>
+            <label>EMAIL:</label><br>
+            <input type="email" name="email" value="{{ treinador.email }}" required style="width: 100%;">
+        </div>
+        <div>
+            <label>CIDADE:</label><br>
+            <input type="text" name="cidade" value="{{ treinador.cidade }}" style="width: 100%;">
+        </div>
+        <div>
+            <label>FOTO DE PERFIL:</label><br>
+            <input type="file" name="foto_perfil">
+        </div>
+        
+        <button type="submit">ATUALIZAR DADOS</button>
+        <a href="treinadores_listar.php" class="btn-link" style="display: block; text-align: center; margin-top: 10px;">VOLTAR</a>
+    </form>
+</div>
 {% endblock %}

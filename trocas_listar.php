@@ -17,7 +17,7 @@ $sql = "SELECT
             c_oferecida.apelido as apelido_oferecido,
             p_oferecido.nome as pokemon_oferecido,
             p_oferecido.imagem_url as img_oferecido
-        FROM lista_desejos ld
+        FROM ofertas_troca ld
         JOIN treinadores t ON ld.treinador_id = t.id
         JOIN pokedex p_desejado ON ld.pokedex_id_desejado = p_desejado.id
         JOIN capturas c_oferecida ON ld.captura_id_oferecida = c_oferecida.id

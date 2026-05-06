@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($pokedex_id_desejado && $captura_id_oferecida) {
         try {
-            $sql = "INSERT INTO lista_desejos (treinador_id, pokedex_id_desejado, captura_id_oferecida) 
+            $sql = "INSERT INTO ofertas_troca (treinador_id, pokedex_id_desejado, captura_id_oferecida) 
                     VALUES (:tid, :pid, :cid)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([

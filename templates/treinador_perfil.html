@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil de {{ treinador_perfil.nome|upper }}{% endblock %}
+
+{% block content %}
+    <div class="pokemon-panel" style="max-width: 800px; margin: auto; text-align: center;">
+        <img src="{{ treinador_perfil.foto_perfil }}" class="profile-img" alt="Foto de Perfil" style="width: 80px; height: 80px; margin-bottom: 15px;">
+        <h2>PERFIL DE {{ treinador_perfil.nome|upper }}</h2>
+        <p style="font-size: 0.7rem; margin-bottom: 5px;">E-MAIL: {{ treinador_perfil.email }}</p>
+        <p style="font-size: 0.7rem;">CIDADE: {{ treinador_perfil.cidade|upper }}</p>
+
+        {% if is_own_profile %}
+            <div style="margin-top: 20px;">
+                <a href="treinadores_editar.php?id={{ treinador_perfil.id }}" class="btn-link">[EDITAR MEU PERFIL]</a>
+                <a href="treinadores_excluir.php?id={{ treinador_perfil.id }}" class="btn-link" onclick="return confirm('Tem certeza que deseja EXCLUIR sua conta? Todos os seus Pokémon e ofertas serão perdidos!')">[EXCLUIR CONTA]</a>
+                <a href="logout.php" class="btn-link">[SAIR]</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="pokemon-panel" style="max-width: 800px; margin: 30px auto;">
+        <h2>POKéMONS CAPTURADOS</h2>
+        {% if capturas_treinador %}
+            <div class="pokemon-grid">
+                {% for captura in capturas_treinador %}
+                    <div class="pokemon-card">
+                        <img src="{{ captura.imagem_url }}" alt="{{ captura.especie }}" style="width: 96px; image-rendering: pixelated;">
+                        <span class="dex-number">#{{ "%03d"|format(captura.numero_dex) }}</span>
+                        <strong class="pokemon-name">{{ captura.apelido|upper }} ({{ captura.especie|upper }})</strong>
+                        <p style="font-size: 0.6rem; margin: 5px 0;">NÍVEL: {{ captura.nivel }}</p>
+                        <div>
+                            <span class="type-tag">{{ captura.tipo_principal|upper }}</span>
+                            {% if captura.tipo_secundario %}
+                                <span class="type-tag">{{ captura.tipo_secundario|upper }}</span>
+                            {% endif %}
+                        </div>
+                        {% if is_own_profile %}
+                            <div class="actions">
+                                {# Adicione ações para seus próprios Pokémon capturados aqui, ex: editar, soltar #}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center; font-size: 0.7rem;">Nenhum Pokémon capturado ainda.</p>
+        {% endif %}
+    </div>
+
+    <div class="pokemon-panel" style="max-width: 800px; margin: 30px auto;">
+        <h2>LISTA DE DESEJOS (QUERO TER)</h2>
+        {% if desejos_treinador %}
+            <div class="pokemon-grid">
+                {% for pokemon in desejos_treinador %}
+                    <div class="pokemon-card">
+                        <img src="{{ pokemon.imagem_url }}" alt="{{ pokemon.nome }}" style="width: 64px; image-rendering: pixelated;">
+                        <strong class="pokemon-name">{{ pokemon.nome|upper }}</strong>
+                        <span class="dex-number">#{{ "%03d"|format(pokemon.numero_dex) }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center; font-size: 0.7rem;">Nenhum item na lista de desejos.</p>
+        {% endif %}
+    </div>
+
+    <div class="pokemon-panel" style="max-width: 800px; margin: 30px auto;">
+        <h2>OFERTAS DE TROCA ATIVAS</h2>
+        {% if ofertas_troca %}
+            <div class="pokemon-grid">
+                {% for oferta in ofertas_troca %}
+                    <div class="pokemon-card" style="display: flex; flex-direction: column; justify-content: space-between; height: auto;">
+                        <p style="font-size: 0.5rem;">QUER:</p>
+                        <img src="{{ oferta.pokemon_desejado_img }}" style="width: 48px; margin: auto;">
+                        <strong style="font-size: 0.6rem;">{{ oferta.pokemon_desejado_nome|upper }}</strong>
+                        
+                        <p style="font-size: 0.5rem; margin: 10px 0;">POR:</p>
+                        <img src="{{ oferta.pokemon_oferecido_img }}" style="width: 48px; margin: auto;">
+                        <strong style="font-size: 0.6rem;">{{ oferta.pokemon_oferecido_apelido|upper }}</strong>
+
+                        {% if not is_own_profile %}
+                            <div class="actions" style="margin-top: 15px;">
+                                <a href="trocas_aceitar.php?id={{ oferta.id }}" class="btn-link" style="color: var(--poke-red);">[ACEITAR TROCA]</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center; font-size: 0.7rem;">Nenhuma oferta de troca criada ainda.</p>
+        {% endif %}
+    </div>
+{% endblock %}
