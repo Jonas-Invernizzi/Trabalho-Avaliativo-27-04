@@ -10,18 +10,21 @@
         {% for troca in trocas %}
         <div class="pokemon-card trade-card">
             <div class="trade-offer-block">
-                <span class="dex-number">{{ troca.treinador_nome|upper }} OFERECE</span>
-                <img src="{{ troca.img_oferecido|default('https://via.placeholder.com/96') }}" class="pokemon-small-img">
-                <p class="pokemon-name">{{ troca.pokemon_oferecido }}</p>
-                {% if troca.apelido_oferecido %}<small class="pokemon-nickname">"{{ troca.apelido_oferecido }}"</small>{% endif %}
+                <span class="dex-number">{{ troca.treinador_nome|upper }} OFERECE:</span>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if troca.pokemon_oferecido_shiny %}shiny/{% endif %}{{ troca.pokemon_oferecido_dex }}.png" 
+                     class="pokemon-small-img {% if troca.pokemon_oferecido_shiny %}shiny-glow{% endif %}"
+                     alt="Pokémon Oferecido" data-dex="{{ troca.pokemon_oferecido_dex }}" style="width: 80px;">
+                <p class="pokemon-name" data-dex="{{ troca.pokemon_oferecido_dex }}" data-shiny="{{ troca.pokemon_oferecido_shiny }}">{{ troca.pokemon_oferecido_nome|upper }}</p> {# Nome agora vem do PHP #}
             </div>
 
             <div class="trade-separator">⇄</div>
 
             <div class="trade-offer-block">
-                <span class="dex-number">PROCURA POR</span>
-                <img src="{{ troca.img_desejado|default('https://via.placeholder.com/96') }}" class="pokemon-small-img">
-                <p class="pokemon-name">{{ troca.pokemon_desejado }}</p>
+                <span class="dex-number">PROCURA POR:</span>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if troca.pokemon_desejado_shiny %}shiny/{% endif %}{{ troca.pokemon_desejado_dex }}.png" 
+                     class="pokemon-small-img {% if troca.pokemon_desejado_shiny %}shiny-glow{% endif %}"
+                     alt="Pokémon Desejado" data-dex="{{ troca.pokemon_desejado_dex }}" style="width: 80px;">
+                <p class="pokemon-name" data-dex="{{ troca.pokemon_desejado_dex }}" data-shiny="{{ troca.pokemon_desejado_shiny }}">{{ troca.pokemon_desejado_nome|upper }}</p> {# Nome agora vem do PHP #}
             </div>
 
             <div>
@@ -35,4 +38,11 @@
         <p>Nenhuma oferta de troca no momento.</p>
         {% endfor %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // O nome e a imagem agora são carregados diretamente do PHP.
+            // Se for necessário carregar os tipos aqui, um script similar ao de pokedex_listar.html seria implementado.
+        });
+    </script>
 {% endblock %}

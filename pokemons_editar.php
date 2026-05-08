@@ -1,5 +1,6 @@
 <?php
-session_start();
+// carregar_twig.php já inicia a sessão e configura o session_save_path
+// Não é necessário chamar session_start() aqui novamente.
 require('carregar_pdo.php');
 require('carregar_twig.php');
 
@@ -11,24 +12,14 @@ if (!isset($_SESSION['treinador_id'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = (int) $_POST['id'] ?? false;
     $numero_dex = $_POST['numero_dex'] ?? false;
-    $nome =  $_POST['nome'] ?? false;
-    $tipo_principal = $_POST['tipo_principal'] ?? false;
-    $tipo_secundario = $_POST['tipo_secundario'] ?? null;
     $is_shiny = isset($_POST['is_shiny']) ? (int)$_POST['is_shiny'] : 0;
 
-    $pasta = $is_shiny ? 'shiny/' : '';
-    $imagem_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{$pasta}{$numero_dex}.png";
-
-    $sql = 'UPDATE pokedex SET numero_dex = :num, nome = :nome, tipo_principal = :tp, tipo_secundario = :ts, imagem_url = :img, is_shiny = :shiny WHERE id = :id';
+    $sql = 'UPDATE pokedex SET numero_dex = :num, is_shiny = :shiny WHERE id = :id';
 
     $dados = $pdo->prepare($sql);
     $dados->execute([
         ':id' => $id,
         ':num' => $numero_dex,
-        ':nome' => $nome,
-        ':tp' => $tipo_principal,
-        ':ts' => $tipo_secundario,
-        ':img' => $imagem_url,
         ':shiny' => $is_shiny
     ]);
 
@@ -43,7 +34,13 @@ if (!$id) {
     $dado = $pdo->prepare('SELECT * FROM pokedex WHERE id = :id');
     $dado->execute(['id' => $id]);
     $pokemon = $dado->fetch(PDO::FETCH_ASSOC);
+
+    // Busca a quantidade total de exemplares que o treinador possui desta espécie
+    $stmt_count = $pdo->prepare("SELECT SUM(quantidade_disponivel) FROM capturas WHERE pokedex_id = :pid AND treinador_id = :tid");
+    $stmt_count->execute([':pid' => $id, ':tid' => $_SESSION['treinador_id']]);
+    $quantidade_total = (int)$stmt_count->fetchColumn();
 }
 echo $twig->render('pokedex_editar.html', [
     'pokemon' => $pokemon,
+    'quantidade_total' => $quantidade_total
 ]);

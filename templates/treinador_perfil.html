@@ -19,27 +19,39 @@
     </div>
 
     <div class="pokemon-panel" style="max-width: 800px; margin: 30px auto;">
-        <h2>POKéMONS CAPTURADOS</h2>
+        <h2>POKéMONS CAPTURADOS ({{ capturas_treinador|length }})</h2>
         {% if capturas_treinador %}
             <div class="pokemon-grid">
                 {% for captura in capturas_treinador %}
-                    <div class="pokemon-card">
-                        <img src="{{ captura.imagem_url }}" alt="{{ captura.especie }}" style="width: 96px; image-rendering: pixelated;">
-                        <span class="dex-number">#{{ "%03d"|format(captura.numero_dex) }}</span>
-                        <strong class="pokemon-name">{{ captura.apelido|upper }} ({{ captura.especie|upper }})</strong>
-                        <p style="font-size: 0.6rem; margin: 5px 0;">NÍVEL: {{ captura.nivel }}</p>
-                        <div>
-                            <span class="type-tag">{{ captura.tipo_principal|upper }}</span>
-                            {% if captura.tipo_secundario %}
-                                <span class="type-tag">{{ captura.tipo_secundario|upper }}</span>
+                    {% set card_inner %}
+                        <div class="pokemon-card" data-dex="{{ captura.numero_dex }}" {% if not is_own_profile %}style="cursor: pointer; border-color: var(--poke-red);"{% endif %}>
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if captura.is_shiny %}shiny/{% endif %}{{ captura.numero_dex }}.png" 
+                                 alt="Pokemon #{{ captura.numero_dex }}" 
+                                 class="pokemon-img-card {% if captura.is_shiny %}shiny-glow{% endif %}"
+                                 style="width: 96px; image-rendering: pixelated;">
+                            <span class="dex-number">#{{ "%03d"|format(captura.numero_dex) }}</span>
+                            <strong class="pokemon-name">{{ captura.nome|upper }}</strong>
+                            <p style="font-size: 0.6rem; margin: 5px 0;">NÍVEL: {{ captura.nivel }}</p>
+                            <p style="font-size: 0.5rem; color: var(--poke-blue);">DISPONÍVEL: {{ captura.quantidade_disponivel }}</p>
+                            <div class="types-container"></div>
+                            {% if not is_own_profile %}
+                                <div style="font-size: 0.4rem; color: var(--poke-red); margin-top: 5px;">[TENHO INTERESSE]</div>
+                            {% endif %}
+                            {% if is_own_profile %}
+                                <div class="actions">
+                                    {# Adicione ações para seus próprios Pokémon capturados aqui, ex: editar, soltar #}
+                                </div>
                             {% endif %}
                         </div>
-                        {% if is_own_profile %}
-                            <div class="actions">
-                                {# Adicione ações para seus próprios Pokémon capturados aqui, ex: editar, soltar #}
-                            </div>
-                        {% endif %}
-                    </div>
+                    {% endset %}
+
+                    {% if not is_own_profile %}
+                        <a href="trocas_inserir.php?desired_pokedex_id={{ captura.pokedex_id }}&wish_treinador_id={{ treinador_perfil.id }}" style="text-decoration: none; color: inherit;">
+                            {{ card_inner }}
+                        </a>
+                    {% else %}
+                        {{ card_inner }}
+                    {% endif %}
                 {% endfor %}
             </div>
         {% else %}
@@ -52,11 +64,27 @@
         {% if desejos_treinador %}
             <div class="pokemon-grid">
                 {% for pokemon in desejos_treinador %}
-                    <div class="pokemon-card">
-                        <img src="{{ pokemon.imagem_url }}" alt="{{ pokemon.nome }}" style="width: 64px; image-rendering: pixelated;">
+                    {% set card_content %}
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if pokemon.is_shiny %}shiny/{% endif %}{{ pokemon.numero_dex }}.png" 
+                             alt="Pokemon #{{ pokemon.numero_dex }}" 
+                             class="pokemon-img-card {% if pokemon.is_shiny %}shiny-glow{% endif %}"
+                             style="width: 96px; image-rendering: pixelated;">
                         <strong class="pokemon-name">{{ pokemon.nome|upper }}</strong>
                         <span class="dex-number">#{{ "%03d"|format(pokemon.numero_dex) }}</span>
-                    </div>
+                    {% endset %}
+
+                    {% if not is_own_profile %}
+                        <a href="trocas_inserir.php?wish_pokedex_id={{ pokemon.id }}&wish_treinador_id={{ treinador_perfil.id }}" style="text-decoration: none; color: inherit;">
+                            <div class="pokemon-card" data-dex="{{ pokemon.numero_dex }}" style="cursor: pointer; border-color: var(--poke-blue);">
+                                {{ card_content }}
+                                <div style="font-size: 0.4rem; color: var(--poke-blue); margin-top: 5px;">[TENHO ESTE PARA TROCAR]</div>
+                            </div>
+                        </a>
+                    {% else %}
+                        <div class="pokemon-card" data-dex="{{ pokemon.numero_dex }}">
+                            {{ card_content }}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% else %}
@@ -65,21 +93,29 @@
     </div>
 
     <div class="pokemon-panel" style="max-width: 800px; margin: 30px auto;">
-        <h2>OFERTAS DE TROCA ATIVAS</h2>
+        <h2>OFERTAS DE TROCA ATIVAS ({{ ofertas_troca|length }})</h2>
         {% if ofertas_troca %}
-            <div class="pokemon-grid">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
                 {% for oferta in ofertas_troca %}
-                    <div class="pokemon-card" style="display: flex; flex-direction: column; justify-content: space-between; height: auto;">
-                        <p style="font-size: 0.5rem;">QUER:</p>
-                        <img src="{{ oferta.pokemon_desejado_img }}" style="width: 48px; margin: auto;">
-                        <strong style="font-size: 0.6rem;">{{ oferta.pokemon_desejado_nome|upper }}</strong>
-                        
-                        <p style="font-size: 0.5rem; margin: 10px 0;">POR:</p>
-                        <img src="{{ oferta.pokemon_oferecido_img }}" style="width: 48px; margin: auto;">
-                        <strong style="font-size: 0.6rem;">{{ oferta.pokemon_oferecido_apelido|upper }}</strong>
+                    <div class="pokemon-card trade-card" style="border-color: var(--poke-blue); height: auto; flex-wrap: wrap; text-align: center;">
+                        <div style="flex: 1; min-width: 120px;">
+                            <p style="font-size: 0.5rem; color: #666; margin-bottom: 5px;">PROCURA POR:</p>
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if oferta.pokemon_desejado_shiny %}shiny/{% endif %}{{ oferta.pokemon_desejado_dex }}.png" 
+                                 class="pokemon-img-card {% if oferta.pokemon_desejado_shiny %}shiny-glow{% endif %}" style="width: 80px; display: block; margin: 0 auto;">
+                            <strong class="pokemon-name" style="font-size: 0.6rem;">{{ oferta.pokemon_desejado_nome|upper }}</strong>
+                        </div>
+
+                        <div class="trade-separator" style="font-size: 2rem;">⇄</div>
+
+                        <div style="flex: 1; min-width: 120px;">
+                            <p style="font-size: 0.5rem; color: #666; margin-bottom: 5px;">OFERECE:</p>
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if oferta.pokemon_oferecido_shiny %}shiny/{% endif %}{{ oferta.pokemon_oferecido_dex }}.png" 
+                                 class="pokemon-img-card {% if oferta.pokemon_oferecido_shiny %}shiny-glow{% endif %}" style="width: 80px; display: block; margin: 0 auto;">
+                            <strong class="pokemon-name" style="font-size: 0.6rem;">{{ oferta.pokemon_oferecido_nome|upper }}</strong>
+                        </div>
 
                         {% if not is_own_profile %}
-                            <div class="actions" style="margin-top: 15px;">
+                            <div style="width: 100%; margin-top: 15px;">
                                 <a href="trocas_aceitar.php?id={{ oferta.id }}" class="btn-link" style="color: var(--poke-red);">[ACEITAR TROCA]</a>
                             </div>
                         {% endif %}
@@ -90,4 +126,68 @@
             <p style="text-align: center; font-size: 0.7rem;">Nenhuma oferta de troca criada ainda.</p>
         {% endif %}
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const typeLabels = { 
+            grass: 'PLANTA', poison: 'VENENO', fire: 'FOGO', flying: 'VOADOR', 
+            water: 'ÁGUA', bug: 'INSETO', normal: 'NORMAL', electric: 'ELÉTRICO', 
+            ground: 'TERRA', fairy: 'FADA', fighting: 'LUTADOR', psychic: 'PSÍQUICO', 
+            rock: 'PEDRA', steel: 'AÇO', ice: 'GELO', ghost: 'FANTASMA', 
+            dragon: 'DRAGÃO', dark: 'SOMBRIO' 
+        };
+
+        const typeClasses = {
+            grass: 'planta', poison: 'veneno', fire: 'fogo', flying: 'voador',
+            water: 'agua', bug: 'inseto', normal: 'normal', electric: 'eletrico',
+            ground: 'terra', fairy: 'fada', fighting: 'lutador', psychic: 'psiquico',
+            rock: 'pedra', steel: 'aço', ice: 'gelo', ghost: 'fantasma',
+            dragon: 'dragao', dark: 'sombrio'
+        };
+
+        // Função para carregar dados de um card
+        function loadPokeTypes(element) { // Renomeada para refletir que agora só carrega tipos
+            const dex = element.getAttribute('data-dex');
+            
+            // Se o PHP enviou um valor vazio ou nulo, o dex virá como string vazia
+            if (!dex || dex === "" || dex === "0") {
+                const nameEl = element.classList.contains('pokemon-name') ? element : element.querySelector('.pokemon-name');
+                if (nameEl) {
+                    nameEl.textContent = "DADO INVÁLIDO";
+                    nameEl.style.color = "red";
+                }
+                console.warn("Aviso: Pokémon com número de dex vazio encontrado no elemento:", element);
+                return;
+            }
+
+            const typeContainer = element.querySelector('.types-container');
+
+            fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
+                .then(r => {
+                    if (!r.ok) throw new Error('Pokemon não encontrado');
+                    return r.json();
+                })
+                .then(data => {
+                    // O nome agora é carregado diretamente do PHP, não precisa ser atualizado via JS
+                    
+                    if (typeContainer) {
+                        typeContainer.innerHTML = '';
+                        data.types.forEach(t => {
+                            const span = document.createElement('span');
+                            const typeName = t.type.name;
+                            span.className = `type-badge type-${typeClasses[typeName] || typeName}`;
+                            span.textContent = typeLabels[t.type.name] || t.type.name.toUpperCase();
+                            typeContainer.appendChild(span);
+                        });
+                    }
+                })
+                .catch(err => {
+                    // O nome agora é carregado diretamente do PHP
+                    console.error("Erro PokéAPI:", err);
+                });
+        }
+
+        document.querySelectorAll('.pokemon-card[data-dex]').forEach(loadPokeTypes); // Chama a função para os cards
+    });
+    </script>
 {% endblock %}

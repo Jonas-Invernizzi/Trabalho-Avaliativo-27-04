@@ -1,6 +1,8 @@
 <?php
-session_start();
+// carregar_twig.php já inicia a sessão e configura o session_save_path
+// Não é necessário chamar session_start() aqui novamente.
 require('carregar_pdo.php');
+require('carregar_twig.php');
 
 if (!isset($_SESSION['treinador_id'])) {
     header("Location: login.php");
@@ -23,8 +25,6 @@ if (!$id) {
     header('location:Pokemon.php');
     die;
 }
-
-require('carregar_twig.php');
 
 $dados = $pdo->prepare('SELECT * FROM pokedex WHERE id = :id');
 $dados->execute([':id' => $id]);

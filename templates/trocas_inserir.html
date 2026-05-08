@@ -14,21 +14,39 @@ content %}
         <select name="captura_id_oferecida" required>
           <option value="">Selecione um Pokémon seu...</option>
           {% for captura in minhas_capturas %}
-          <option value="{{ captura.id }}">
-            {{ captura.especie }}{% if captura.apelido %} ({{ captura.apelido
-            }}){% endif %}
+          <option value="{{ captura.id }}"
+                  data-dex="{{ captura.numero_dex }}"
+                  data-shiny="{{ captura.is_shiny }}"
+                  {% if pre_selected_oferecida == captura.pokedex_id %}selected{% endif %}>
+            #{{ "%03d"|format(captura.numero_dex) }} {% if captura.is_shiny %}(Shiny){% endif %}
           </option>
           {% endfor %}
         </select>
       </div>
 
       <div class="form-field-half">
-        <label>VOCÊ PROCURA:</label>
+        <label>{% if outro_treinador %}O QUE {{ outro_treinador.nome|upper }} TEM DISPONÍVEL:{% else %}VOCÊ PROCURA:{% endif %}</label>
         <select name="pokedex_id_desejado" required>
           <option value="">Selecione o Pokémon desejado...</option>
-          {% for p in pokedex %}
-          <option value="{{ p.id }}">{{ p.nome }}</option>
-          {% endfor %}
+          {% if outro_treinador %}
+            {# Se viemos do perfil de alguém, mostra apenas o que ele tem disponível para troca #}
+            {% for c in pokemons_outro_treinador %}
+              <option value="{{ c.pokedex_id }}"
+                      data-dex="{{ c.numero_dex }}"
+                      data-shiny="{{ c.is_shiny }}"
+                      {% if pre_selected_desejada == c.pokedex_id %}selected{% endif %}>
+                #{{ "%03d"|format(c.numero_dex) }} {% if c.is_shiny %}(Shiny){% endif %}
+              </option>
+            {% endfor %}
+          {% else %}
+            {# Caso contrário, mostra a pokedex inteira #}
+            {% for p in pokedex %}
+              <option value="{{ p.id }}" data-dex="{{ p.numero_dex }}" data-shiny="{{ p.is_shiny }}"
+                      {% if pre_selected_desejada == p.id %}selected{% endif %}>
+                #{{ "%03d"|format(p.numero_dex) }} {% if p.is_shiny %}(Shiny){% endif %}
+              </option>
+            {% endfor %}
+          {% endif %}
         </select>
       </div>
     </div>
@@ -43,4 +61,67 @@ content %}
 <div style="text-align: center">
   <a href="trocas_listar.php" class="btn btn-secondary">VOLTAR AO MERCADO</a>
 </div>
+
+<div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px;">
+    <div id="preview-oferecido" class="pokemon-card" style="display: none; flex-direction: column; align-items: center; justify-content: center;">
+        <p style="font-size: 0.6rem;">VOCÊ OFERECE:</p>
+        <img id="img-oferecido" src="" alt="Pokémon Oferecido" style="width: 96px; image-rendering: pixelated;">
+        <strong id="name-oferecido" class="pokemon-name"></strong>
+    </div>
+    <div id="preview-desejado" class="pokemon-card" style="display: none; flex-direction: column; align-items: center; justify-content: center;">
+        <p style="font-size: 0.6rem;">VOCÊ PROCURA:</p>
+        <img id="img-desejado" src="" alt="Pokémon Desejado" style="width: 96px; image-rendering: pixelated;">
+        <strong id="name-desejado" class="pokemon-name"></strong>
+    </div>
+</div>
+
+<script>
+    const typeLabels = { grass: 'PLANTA', poison: 'VENENO', fire: 'FOGO', flying: 'VOADOR', water: 'ÁGUA', bug: 'INSETO', normal: 'NORMAL', electric: 'ELÉTRICO', ground: 'TERRA', fairy: 'FADA', fighting: 'LUTADOR', psychic: 'PSÍQUICO', rock: 'PEDRA', steel: 'AÇO', ice: 'GELO', ghost: 'FANTASMA', dragon: 'DRAGÃO', dark: 'SOMBRIO' };
+
+    function updatePokemonPreview(selectElement, imgElement, nameElement, previewContainer) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const dex = selectedOption.dataset.dex;
+        const shiny = selectedOption.dataset.shiny === '1';
+
+        if (dex) {
+            const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${shiny ? 'shiny/' : ''}${dex}.png`;
+            imgElement.src = imageUrl;
+            imgElement.classList.toggle('shiny-glow', shiny);
+            
+            fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
+                .then(r => r.json())
+                .then(data => {
+                    nameElement.textContent = data.name.toUpperCase() + (shiny ? ' ✨SHINY' : '');
+                });
+            previewContainer.style.display = 'flex';
+        } else {
+            previewContainer.style.display = 'none';
+            imgElement.src = '';
+            nameElement.textContent = '';
+        }
+    }
+
+    const selectOferecida = document.querySelector('select[name="captura_id_oferecida"]');
+    const selectDesejado = document.querySelector('select[name="pokedex_id_desejado"]');
+
+    selectOferecida.addEventListener('change', () => updatePokemonPreview(selectOferecida, document.getElementById('img-oferecido'), document.getElementById('name-oferecido'), document.getElementById('preview-oferecido')));
+    selectDesejado.addEventListener('change', () => updatePokemonPreview(selectDesejado, document.getElementById('img-desejado'), document.getElementById('name-desejado'), document.getElementById('preview-desejado')));
+
+    // Atualiza previews iniciais caso já haja seleções (ex: vindo de um wishlist)
+    updatePokemonPreview(selectOferecida, document.getElementById('img-oferecido'), document.getElementById('name-oferecido'), document.getElementById('preview-oferecido'));
+    updatePokemonPreview(selectDesejado, document.getElementById('img-desejado'), document.getElementById('name-desejado'), document.getElementById('preview-desejado'));
+
+    // Carregamento automático de nomes nos Selects (essencial pois o banco não tem nomes)
+    document.querySelectorAll('select option[data-dex]').forEach(opt => {
+        const dex = opt.dataset.dex;
+        fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
+            .then(r => r.json())
+            .then(data => {
+                const isShiny = opt.dataset.shiny === '1';
+                const shinyLabel = isShiny ? ' ✨SHINY' : '';
+                const name = data.name.toUpperCase();
+                opt.text = `#${dex.padStart(3, '0')} ${name}${shinyLabel}`;
+            });
+    });
+</script>
 {% endblock %}

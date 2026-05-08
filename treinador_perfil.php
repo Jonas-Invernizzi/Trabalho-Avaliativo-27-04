@@ -1,5 +1,6 @@
 <?php
-session_start();
+// carregar_twig.php já inicia a sessão e configura o session_save_path
+// Não é necessário chamar session_start() aqui novamente.
 require_once 'carregar_pdo.php';
 require_once 'carregar_twig.php';
 
@@ -28,35 +29,37 @@ try {
 
     // Busca os Pokémon capturados por este treinador
     $stmt = $pdo->prepare("
-        SELECT c.id, c.apelido, c.nivel, p.nome as especie, p.numero_dex, p.tipo_principal, p.tipo_secundario, p.imagem_url 
-        FROM capturas c
+        SELECT c.id, c.pokedex_id, c.nivel, c.quantidade_disponivel, p.numero_dex, p.is_shiny, p.nome
+        FROM capturas c 
         JOIN pokedex p ON c.pokedex_id = p.id
         WHERE c.treinador_id = :tid
-        ORDER BY p.numero_dex ASC
+        ORDER BY p.numero_dex ASC, p.is_shiny ASC
     ");
     $stmt->execute([':tid' => $id]);
     $capturas = $stmt->fetchAll();
 
     // Busca a lista de desejos (espécies que ele marcou como interesse)
     $stmt = $pdo->prepare("
-        SELECT p.* FROM lista_desejos ld 
+        SELECT p.*, p.nome FROM lista_desejos ld 
         JOIN pokedex p ON ld.pokedex_id = p.id 
         WHERE ld.treinador_id = :tid
+        ORDER BY p.numero_dex ASC, p.is_shiny ASC
     ");
     $stmt->execute([':tid' => $id]);
     $desejos = $stmt->fetchAll();
 
-    // Busca as ofertas de troca ativas que este treinador criou no mercado
+    // Busca as ofertas de troca que este treinador criou
     $stmt = $pdo->prepare("
         SELECT ot.id,
-               pd.nome as pokemon_desejado_nome, pd.imagem_url as pokemon_desejado_img,
-               co.apelido as pokemon_oferecido_apelido, po.nome as pokemon_oferecido_nome, po.imagem_url as pokemon_oferecido_img
+               pd.numero_dex AS pokemon_desejado_dex, pd.is_shiny AS pokemon_desejado_shiny, pd.nome AS pokemon_desejado_nome,
+               po.numero_dex AS pokemon_oferecido_dex, po.is_shiny AS pokemon_oferecido_shiny, po.nome AS pokemon_oferecido_nome
         FROM ofertas_troca ot
-        JOIN pokedex pd ON ot.pokedex_id_desejado = pd.id
-        JOIN capturas co ON ot.captura_id_oferecida = co.id
-        JOIN pokedex po ON co.pokedex_id = po.id
-        WHERE ld.treinador_id = :tid
+        LEFT JOIN pokedex pd ON ot.pokedex_id_desejado = pd.id
+        LEFT JOIN capturas co ON ot.captura_id_oferecida = co.id
+        LEFT JOIN pokedex po ON co.pokedex_id = po.id
+        WHERE ot.treinador_id = :tid
     ");
+    // Removi o filtro restrito de quantidade para que você possa ao menos ver a oferta e depurar se o Pokémon existe
     $stmt->execute([':tid' => $id]);
     $ofertas = $stmt->fetchAll();
 

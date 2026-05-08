@@ -7,7 +7,15 @@ $twig = new \Twig\Environment($loader, [
 ]);
 
 // Adiciona a variável de sessão globalmente para todos os templates
-if (session_status() == PHP_SESSION_NONE) { session_start(); }
+if (session_status() == PHP_SESSION_NONE) {
+    // Define um diretório local para sessões caso o diretório temporário do sistema falhe
+    $sessionPath = __DIR__ . DIRECTORY_SEPARATOR . 'sessions';
+    if (!is_dir($sessionPath)) {
+        mkdir($sessionPath, 0777, true);
+    }
+    session_save_path($sessionPath);
+    session_start();
+}
 
 // Verificação de integridade: O usuário da sessão ainda existe no banco?
 if (isset($_SESSION['treinador_id'])) {

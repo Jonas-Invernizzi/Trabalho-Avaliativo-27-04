@@ -1,63 +1,16 @@
 /* Importação da fonte clássica de 8-bits */
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
-* {
-  box-sizing: border-box;
-}
-
 :root {
-  --fr-red: #e83030; /* Vermelho clássico da Pokédex FireRed */
-  --fr-blue: #0088e0; /* Azul dos menus/botões */
-  --fr-green: #58c868; /* Verde de confirmação */
-  --fr-light: #f8f8f8; /* Fundo claro dos menus */
-  --fr-dark: #404040; /* Texto cinza escuro */
-  --fr-border: #787878; /* Borda padrão */
-  --fr-menu-bg: #ffffff;
+  --poke-red: #CC0000;
+  --poke-blue: #3B4CCA;
+  --poke-yellow: #FFCB05;
+  --poke-dark: #303030;
+  --poke-light: #F8F8F8;
+  --white: #ffffff;
 }
 
-body {
-  background-color: #e8e8e8; /* Cinza claro para o fundo da página */
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-  color: var(--fr-dark);
-  font-family: "Press Start 2P", cursive;
-  font-size: 12px; /* Aumentado levemente para melhor legibilidade */
-  line-height: 1.6;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh; /* Necessário para o rodapé grudar no fim */
-}
-
-/* Container que simula a tela do GBA */
-.main-container {
-  width: fit-content;
-  min-width: 320px;
-  max-width: 95%;
-  border: 4px solid var(--fr-border);
-  background: var(--fr-menu-bg);
-  padding: 30px;
-  box-shadow: 0 10px 0 #505050;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  margin: 20px 0;
-}
-
-h1,
-h2,
-h3 {
-  color: var(--fr-blue);
-  text-shadow: none;
-  text-transform: uppercase;
-  text-align: center;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
-}
+/* Estilos Utilitários Remanescentes */
 
 /* Estilização das "Cartas" de Pokémon baseadas na Tabela pokedex */
 .pokedex-grid {
@@ -68,28 +21,56 @@ h3 {
 }
 
 .pokemon-card {
-  background: #ffffff;
-  border: 2px solid var(--fr-border);
+  background: var(--white);
+  border: 4px solid var(--poke-dark);
   padding: 15px;
   text-align: center;
   transition: background 0.2s;
-  box-shadow: 4px 4px 0px #eee;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
   border-radius: 8px;
+  position: relative;
 }
 
 .pokemon-card:hover {
   background: #f0f8ff;
-  border-color: var(--fr-blue);
+  border-color: var(--poke-blue);
 }
 
 .pokemon-card img {
   width: 96px; /* Tamanho original dos sprites de GBC/N64 */
-  height: 96px;
+  height: auto;
   image-rendering: pixelated;
-  background: #f0f0f0;
-  border: 1px solid #ccc;
+  background: transparent;
+  border: 2px solid #eee;
   margin-bottom: 10px;
-  border-radius: 4px;
+  border-radius: 8px;
+}
+
+/* Efeito de Pokémon "Visto mas não Capturado" */
+.pokemon-card img.silhouette {
+  filter: brightness(0) !important;
+}
+
+/* Brilho ao redor para Pokémon Shiny */
+.shiny-glow {
+  filter: drop-shadow(0 0 10px rgba(255, 203, 5, 0.8)) !important;
+  animation: shiny-sparkle 1.5s infinite alternate ease-in-out;
+}
+
+/* Quando for silhueta E shiny ao mesmo tempo, garante que continue preto com brilho */
+.pokemon-card img.silhouette.shiny-glow {
+  filter: brightness(0) drop-shadow(0 0 10px rgba(255, 203, 5, 0.8)) !important;
+  animation: shiny-sparkle-silhouette 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes shiny-sparkle {
+  from { filter: drop-shadow(0 0 5px rgba(255, 203, 5, 0.6)); }
+  to { filter: drop-shadow(0 0 15px rgba(255, 203, 5, 1)); }
+}
+
+@keyframes shiny-sparkle-silhouette {
+  from { filter: brightness(0) drop-shadow(0 0 5px rgba(255, 203, 5, 0.6)); }
+  to { filter: brightness(0) drop-shadow(0 0 15px rgba(255, 203, 5, 1)); }
 }
 
 /* Tipos de Pokémon (Referente a tipo_principal no SQL) */
@@ -166,26 +147,57 @@ h3 {
 /* Layout para formulários com imagem lateral (Estilo Pokédex) */
 .form-main-content {
   display: flex;
-  gap: 30px;
-  align-items: flex-start;
+  gap: 40px;
+  align-items: center;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  background: var(--white);
+  padding: 20px;
+  border: 4px solid var(--poke-dark);
+  border-radius: 15px;
+  box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
 }
 
 .form-image-preview {
   flex: 0 0 auto;
   text-align: center;
-  border: 2px dashed var(--fr-border);
+  border: 4px solid var(--poke-dark);
   padding: 15px;
   border-radius: 12px;
-  background: #f9f9f9;
+  background: #f0f0f0;
+  min-width: 200px;
 }
 
 .form-fields-group {
   flex: 1;
-  min-width: 250px;
+  min-width: 300px;
   text-align: left;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Duas colunas para os campos */
+  gap: 15px 25px;
+}
+
+/* Ajuste para que inputs não fiquem com margem excessiva dentro do grid */
+.form-fields-group input {
+  margin-bottom: 0;
+}
+
+.form-field-half {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .form-fields-group {
+    grid-template-columns: 1fr; /* Uma coluna em celulares */
+  }
+  
+  .form-main-content {
+    padding: 15px;
+    gap: 20px;
+  }
 }
 
 /* Botões estilo Pokémon FireRed */
@@ -222,79 +234,6 @@ h3 {
   background-color: var(--fr-green);
 }
 
-/* Tabelas para Inventário e Treinadores */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  border: 2px solid var(--fr-border);
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-th {
-  background-color: var(--fr-red);
-  padding: 15px;
-  border: 1px solid var(--fr-border);
-  font-size: 10px;
-  color: white;
-}
-
-td {
-  padding: 12px;
-  border: 1px solid #eee;
-  text-align: center;
-  color: var(--fr-dark);
-}
-
-tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-/* Formulários (Inputs) */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="date"],
-select {
-  background: white;
-  border: 2px solid #ccc;
-  color: var(--fr-dark);
-  padding: 10px;
-  font-family: "Press Start 2P", cursive;
-  font-size: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--fr-blue);
-}
-
-/* Barra de Navegação / Menu */
-nav {
-  background: var(--fr-red); /* Revertido para Vermelho FireRed */
-  width: 100%;
-  padding: 20px 0; /* Tamanho aumentado */
-  border-bottom: 4px solid #a02020;
-  margin-bottom: 30px;
-  text-align: center;
-  border-radius: 0 0 10px 10px;
-  flex-shrink: 0;
-}
-
-nav a {
-  color: #fff; /* Texto branco para o fundo vermelho */
-  margin: 0 15px;
-  text-decoration: none;
-  font-size: 10px;
-  text-shadow: 1px 1px #501010;
-}
-
 /* Estilo para Itens do Inventário */
 .item-slot {
   border: 2px solid var(--fr-border);
@@ -304,12 +243,4 @@ nav a {
   justify-content: space-between;
   margin-bottom: 10px;
   border-radius: 4px;
-}
-
-/* Painéis específicos usados nos templates */
-.pokemon-panel {
-  background: white !important;
-  border: 3px solid var(--fr-border);
-  box-shadow: 4px 4px 0px #eee;
-  color: var(--fr-dark) !important;
 }

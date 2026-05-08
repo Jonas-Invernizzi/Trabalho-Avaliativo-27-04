@@ -8,13 +8,13 @@
     {# Main container for image and fields #}
     <div id="preview-container" class="form-image-preview">
       {# Image preview container #}
-      <span class="dex-number">CLIQUE NA IMAGEM PARA ALTERNAR SHINY</span>
       <img
         id="pokemon_preview"
         src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
         alt="Preview"
         class="pokemon-preview-img"
       />
+      <p id="shiny_toggle_hint" style="font-size: 8px; color: var(--poke-blue); margin-top: 10px; display: none;">CLIQUE PARA ALTERNAR SHINY</p>
     </div>
     <input type="hidden" id="is_shiny_input" name="is_shiny" value="0" />
     <div class="form-fields-group">
@@ -23,7 +23,7 @@
         ><input type="number" id="numero_dex" name="numero_dex" required />
       </div>
       <div class="form-field-half">
-        <label>NOME:</label><input type="text" id="nome" name="nome" required />
+        <label>NOME:</label><input type="text" id="nome" name="nome" required readonly style="background: #eee; cursor: not-allowed;" />
       </div>
       <div class="form-field-half">
         <label>TIPO 1:</label
@@ -32,11 +32,20 @@
           id="tipo_principal"
           name="tipo_principal"
           required
+          readonly
+          style="background: #eee; cursor: not-allowed;"
         />
       </div>
       <div class="form-field-half">
-        <label>TIPO 2:</label
-        ><input type="text" id="tipo_secundario" name="tipo_secundario" />
+        <label>TIPO 2:</label><input type="text" id="tipo_secundario" name="tipo_secundario" readonly style="background: #eee; cursor: not-allowed;" />
+      </div>
+      <div class="form-field-half">
+        <label>NÍVEL INICIAL:</label>
+        <input type="number" name="nivel" value="5" min="1" max="100" required />
+      </div>
+      <div class="form-field-half">
+        <label>QUANTIDADE PARA TROCA:</label>
+        <input type="number" name="quantidade_disponivel" value="1" min="1" required />
       </div>
     </div>
   </div>
@@ -110,6 +119,7 @@
         sprites.shiny = data.sprites.front_shiny;
         document.getElementById("is_shiny_input").value = 0; // Reset shiny status on new pokemon load
 
+        document.getElementById("shiny_toggle_hint").style.display = "block"; // Mostra a dica
         // Preenche a imagem de preview vinda da API
         const previewContainer = document.getElementById("preview-container");
         const previewImg = document.getElementById("pokemon_preview");
@@ -125,7 +135,9 @@
         document.getElementById("pokemon_preview").src =
           "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"; // Placeholder
         document.getElementById("is_shiny_input").value = 0; // Reset shiny status
-        document.getElementById("pokemon_preview").style.filter = "none";
+        document.getElementById("pokemon_preview").classList.remove("is-shiny"); // Remove classe shiny
+        document.getElementById("shiny_toggle_hint").style.display = "none"; // Esconde a dica
+        sprites = { normal: "", shiny: "" }; // Limpa os sprites
       });
   });
 
@@ -133,6 +145,10 @@
   document
     .getElementById("pokemon_preview")
     .addEventListener("click", function () {
+      // Só permite alternar shiny se houver sprites carregados
+      if (!sprites.normal && !sprites.shiny) {
+        return;
+      }
       const input = document.getElementById("is_shiny_input");
       const isShiny = input.value === "1";
 

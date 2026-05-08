@@ -1,6 +1,8 @@
 <?php
-session_start();
+// carregar_twig.php já inicia a sessão e configura o session_save_path
+// Não é necessário chamar session_start() aqui novamente.
 require_once 'carregar_pdo.php';
+require_once 'carregar_twig.php';
 
 // Verifica se o usuário está logado antes de permitir a alteração
 if (!isset($_SESSION['treinador_id'])) {
@@ -18,13 +20,9 @@ if ($id > 0) {
 
     if ($pokemon) {
         $novo_shiny = 1 - $pokemon['is_shiny'];
-        $pasta = $novo_shiny ? 'shiny/' : '';
-        $nova_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{$pasta}{$pokemon['numero_dex']}.png";
-
-        $stmt = $pdo->prepare("UPDATE pokedex SET is_shiny = :shiny, imagem_url = :url WHERE id = :id");
+        $stmt = $pdo->prepare("UPDATE pokedex SET is_shiny = :shiny WHERE id = :id");
         $stmt->execute([
             ':shiny' => $novo_shiny,
-            ':url'   => $nova_url,
             ':id'    => $id
         ]);
     }

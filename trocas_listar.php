@@ -1,28 +1,28 @@
 <?php
-session_start();
+// carregar_twig.php já inicia a sessão e configura o session_save_path
+// Não é necessário chamar session_start() aqui novamente.
+
+require_once 'carregar_pdo.php';
+require_once 'carregar_twig.php';
 
 if (!isset($_SESSION['treinador_id'])) {
     header("Location: login.php");
     exit;
 }
-require_once 'carregar_pdo.php';
-require_once 'carregar_twig.php';
 
 $sql = "SELECT 
-            ld.id, 
+            ot.id, 
             t.nome as treinador_nome, 
-            ld.treinador_id as criador_id,
-            p_desejado.nome as pokemon_desejado, 
-            p_desejado.imagem_url as img_desejado,
-            c_oferecida.apelido as apelido_oferecido,
-            p_oferecido.nome as pokemon_oferecido,
-            p_oferecido.imagem_url as img_oferecido
-        FROM ofertas_troca ld
-        JOIN treinadores t ON ld.treinador_id = t.id
-        JOIN pokedex p_desejado ON ld.pokedex_id_desejado = p_desejado.id
-        JOIN capturas c_oferecida ON ld.captura_id_oferecida = c_oferecida.id
-        JOIN pokedex p_oferecido ON c_oferecida.pokedex_id = p_oferecido.id
-        ORDER BY ld.data_criacao DESC";
+            ot.treinador_id as criador_id,
+            p_desejado.numero_dex as pokemon_desejado_dex, p_desejado.is_shiny as pokemon_desejado_shiny, p_desejado.nome as pokemon_desejado_nome,
+            p_oferecido.numero_dex as pokemon_oferecido_dex, p_oferecido.is_shiny as pokemon_oferecido_shiny, p_oferecido.nome as pokemon_oferecido_nome
+        FROM ofertas_troca ot
+        LEFT JOIN treinadores t ON ot.treinador_id = t.id
+        LEFT JOIN pokedex p_desejado ON ot.pokedex_id_desejado = p_desejado.id
+        LEFT JOIN capturas c_oferecida ON ot.captura_id_oferecida = c_oferecida.id
+        LEFT JOIN pokedex p_oferecido ON c_oferecida.pokedex_id = p_oferecido.id
+        WHERE (c_oferecida.quantidade_disponivel > 0 OR c_oferecida.id IS NULL)
+        ORDER BY ot.id DESC";
 
 $stmt = $pdo->query($sql);
 $trocas = $stmt->fetchAll();

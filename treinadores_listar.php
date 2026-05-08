@@ -1,12 +1,14 @@
 <?php
-session_start();
+// carregar_twig.php já inicia a sessão e configura o session_save_path
+// Não é necessário chamar session_start() aqui novamente.
+
+require_once 'carregar_pdo.php';
+require_once 'carregar_twig.php';
 
 if (!isset($_SESSION['treinador_id'])) {
     header("Location: login.php");
     exit;
 }
-require_once 'carregar_pdo.php';
-require_once 'carregar_twig.php';
 
 try {
     $stmt = $pdo->query("SELECT * FROM treinadores ORDER BY nome ASC");

@@ -1,70 +1,78 @@
 {% extends 'base.html' %} {% block title %}Editar Pokémon{% endblock %} {% block
 content %}
-<h2>Editar Pokémon: {{ pokemon.nome }}</h2>
-<form action="pokemons_editar.php" method="post">
-  <input type="hidden" name="id" value="{{ pokemon.id }}" />
-  <div class="form-main-content">
-    <div id="preview-container" class="form-image-preview">
-      <span class="dex-number">CLIQUE NA IMAGEM PARA ALTERNAR SHINY</span>
-      <img
-        id="pokemon_preview"
-        src="{{ pokemon.imagem_url }}"
-        alt="Preview"
-        class="pokemon-preview-img {% if pokemon.is_shiny %}is-shiny{% endif %}"
-      />
-    </div>
-    <input
-      type="hidden"
-      id="is_shiny_input"
-      name="is_shiny"
-      value="{{ pokemon.is_shiny }}"
-    />
-    <div class="form-fields-group">
-      <div class="form-field-half">
-        <label for="numero_dex">NÚMERO DEX:</label>
+<div class="pokemon-panel" style="max-width: 800px; margin: auto;">
+    <h2>Editar Pokémon: {{ pokemon.nome }}</h2>
+    <form action="pokemons_editar.php" method="post">
+      <input type="hidden" name="id" value="{{ pokemon.id }}" />
+      <div class="form-main-content">
+        <div id="preview-container" class="form-image-preview">
+          <img
+            id="pokemon_preview"
+            src="{{ pokemon.imagem_url }}"
+            alt="Preview"
+            class="pokemon-preview-img {% if pokemon.is_shiny %}is-shiny{% endif %}"
+          />
+          <p id="shiny_toggle_hint" style="font-size: 8px; color: var(--poke-blue); margin-top: 10px;">CLIQUE PARA ALTERNAR SHINY</p>
+        </div>
         <input
-          type="number"
-          id="numero_dex"
-          name="numero_dex"
-          value="{{ pokemon.numero_dex }}"
-          required
+          type="hidden"
+          id="is_shiny_input"
+          name="is_shiny"
+          value="{{ pokemon.is_shiny }}"
         />
+        <div class="form-fields-group">
+          <div class="form-field-half">
+            <label for="numero_dex">NÚMERO DEX:</label>
+            <input
+              type="number"
+              id="numero_dex"
+              name="numero_dex"
+              value="{{ pokemon.numero_dex }}"
+              required
+            />
+          </div>
+          <div class="form-field-half">
+            <label for="nome">NOME:</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              value="{{ pokemon.nome }}"
+              required
+              readonly
+              style="background: #eee; cursor: not-allowed;"
+            />
+          </div>
+          <div class="form-field-half">
+            <label for="tipo_principal">TIPO 1:</label>
+            <input
+              type="text"
+              id="tipo_principal"
+              name="tipo_principal"
+              value="{{ pokemon.tipo_principal }}"
+              required
+              readonly
+              style="background: #eee; cursor: not-allowed;"
+            />
+          </div>
+          <div class="form-field-half">
+            <label for="tipo_secundario">TIPO 2 (opcional):</label>
+            <input
+              type="text"
+              id="tipo_secundario"
+              name="tipo_secundario"
+              value="{{ pokemon.tipo_secundario }}"
+              readonly
+              style="background: #eee; cursor: not-allowed;"
+            />
+          </div>
+        </div>
       </div>
-      <div class="form-field-half">
-        <label for="nome">NOME:</label>
-        <input
-          type="text"
-          id="nome"
-          name="nome"
-          value="{{ pokemon.nome }}"
-          required
-        />
+      <div style="text-align: center; margin-top: 20px">
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
       </div>
-      <div class="form-field-half">
-        <label for="tipo_principal">TIPO 1:</label>
-        <input
-          type="text"
-          id="tipo_principal"
-          name="tipo_principal"
-          value="{{ pokemon.tipo_principal }}"
-          required
-        />
-      </div>
-      <div class="form-field-half">
-        <label for="tipo_secundario">TIPO 2 (opcional):</label>
-        <input
-          type="text"
-          id="tipo_secundario"
-          name="tipo_secundario"
-          value="{{ pokemon.tipo_secundario }}"
-        />
-      </div>
-    </div>
-  </div>
-  <div style="text-align: center; margin-top: 20px">
-    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-  </div>
-</form>
+    </form>
+</div>
 
 <script>
   let editSprites = { normal: "", shiny: "" };
@@ -102,6 +110,7 @@ content %}
         editSprites.normal = data.sprites.front_default;
         editSprites.shiny = data.sprites.front_shiny;
         // Ensure the image src is correct based on initial shiny state
+        document.getElementById("shiny_toggle_hint").style.display = "block";
         document.getElementById("pokemon_preview").src = initialIsShiny
           ? editSprites.shiny
           : editSprites.normal;
@@ -144,6 +153,7 @@ content %}
         document.getElementById("pokemon_preview").src = currentIsShiny
           ? editSprites.shiny
           : editSprites.normal; // Use stored sprites
+        document.getElementById("shiny_toggle_hint").style.display = "block";
       })
       .catch((error) => {
         console.error("Erro ao buscar Pokémon para edição:", error);
@@ -155,12 +165,18 @@ content %}
           "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"; // Placeholder
         document.getElementById("is_shiny_input").value = 0; // Reset shiny status
         document.getElementById("pokemon_preview").classList.remove("is-shiny"); // Remove shiny class
+        document.getElementById("shiny_toggle_hint").style.display = "none";
+        editSprites = { normal: "", shiny: "" };
       });
   });
 
   document
     .getElementById("pokemon_preview")
     .addEventListener("click", function () {
+      // Só permite alternar se houver sprites carregados
+      if (!editSprites.normal && !editSprites.shiny) {
+        return;
+      }
       const input = document.getElementById("is_shiny_input");
       const isShiny = input.value === "1";
       input.value = isShiny ? "0" : "1";

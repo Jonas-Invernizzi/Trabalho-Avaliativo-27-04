@@ -1,5 +1,6 @@
 <?php
-session_start();
+// carregar_twig.php já inicia a sessão e configura o session_save_path
+// Não é necessário chamar session_start() aqui novamente.
 require_once 'carregar_pdo.php';
 
 // Basic check: only allow logged-in users to access their own captures
@@ -10,7 +11,7 @@ if (!isset($_SESSION['treinador_id']) || $_SESSION['treinador_id'] != ($_GET['tr
 $tid = (int)($_GET['treinador_id'] ?? 0);
 
 if ($tid > 0) {
-    $sql = "SELECT c.id, c.apelido, c.nivel, p.nome as especie 
+    $sql = "SELECT c.id, c.nivel, p.numero_dex, p.is_shiny 
             FROM capturas c 
             JOIN pokedex p ON c.pokedex_id = p.id 
             WHERE c.treinador_id = :tid";
