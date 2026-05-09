@@ -1,72 +1,164 @@
-{% extends 'base.html' %}
-
-{% block title %}Pokédex{% endblock %}
-
-{% block content %}
-    <div class="trade-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-        <h2>POKéDEX</h2>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <form action="Pokemon.php" method="get" class="inline-form" style="display: flex; gap: 5px; margin: 0;">
-                <input type="text" name="search" placeholder="NOME OU Nº" value="{{ search }}" style="margin: 0; width: 140px; font-size: 0.5rem; padding: 8px;">
-                <button type="submit" style="margin: 0; padding: 8px 12px; font-size: 0.5rem; background: var(--poke-dark); color: var(--poke-yellow);">OK</button>
-            </form>
-            {% if session.treinador_id %}
-                <div style="display: flex; gap: 10px;">
-                    <a href="pokedex_importar.php" class="btn-link" style="color: var(--poke-red);" onclick="return confirm('Isso importará os 151 primeiros Pokémons. Deseja continuar?')">[!] IMPORTAR</a>
-                    <a href="pokemons_inserir.php" class="btn-link">[+] NOVO</a>
-                </div>
-            {% endif %}
-        </div>
+{% extends 'base.html' %} {% block title %}Pokédex{% endblock %} {% block
+content %}
+<div
+  class="trade-header"
+  style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  "
+>
+  <h2>POKéDEX</h2>
+  <div style="display: flex; gap: 15px; align-items: center">
+    <form
+      action="Pokemon.php"
+      method="get"
+      class="inline-form"
+      style="display: flex; gap: 5px; margin: 0"
+    >
+      <input
+        type="text"
+        name="search"
+        placeholder="NOME OU Nº"
+        value="{{ search }}"
+        style="margin: 0; width: 140px; font-size: 0.5rem; padding: 8px"
+      />
+      <button
+        type="submit"
+        style="
+          margin: 0;
+          padding: 8px 12px;
+          font-size: 0.5rem;
+          background: var(--poke-dark);
+          color: var(--poke-yellow);
+        "
+      >
+        OK
+      </button>
+    </form>
+    {% if session.treinador_id %}
+    <div style="display: flex; gap: 10px; align-items: center">
+      <a
+        href="pokedex_importar.php"
+        class="btn-link"
+        style="color: var(--poke-red)"
+        onclick="
+          return confirm(
+            'Isso importará os 151 primeiros Pokémons. Deseja continuar?',
+          );
+        "
+        >[!] IMPORTAR</a
+      >
+      <a
+        href="pokemons_inserir.php"
+        class="btn btn-action"
+        style="font-size: 0.6rem; padding: 5px 10px"
+        >[+] NOVO POKÉMON</a
+      >
     </div>
+    {% endif %}
+  </div>
+</div>
 
-    <div class="pokemon-grid">
-        {% for pokemon in pokemons %}
-            <div class="pokemon-card" data-dex="{{ pokemon.numero_dex }}">
-                {% if pokemon.capturado > 0 %}
-                    <div class="caught-badge">GOTCHA!</div>
-                {% endif %}
-                
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if pokemon.is_shiny %}shiny/{% endif %}{{ pokemon.numero_dex }}.png" 
-                     alt="Pokemon #{{ pokemon.numero_dex }}" 
-                     class="pokemon-img-card {% if not pokemon.capturado %}silhouette{% endif %} {% if pokemon.is_shiny %}shiny-glow{% endif %}"
-                     style="width: 96px; image-rendering: pixelated;">
-                
-                <span class="dex-number">#{{ "%03d"|format(pokemon.numero_dex) }}</span>
-                <strong class="pokemon-name" data-dex="{{ pokemon.numero_dex }}">{{ pokemon.nome|upper }}</strong> {# Nome agora vem do PHP #}
-                <div class="types-container" data-dex="{{ pokemon.numero_dex }}"></div>
+<div class="pokemon-grid">
+  {% for pokemon in pokemons %}
+  <div class="pokemon-card" data-dex="{{ pokemon.numero_dex }}">
+    {% if pokemon.capturado > 0 %}
+    <div class="caught-badge">GOTCHA!</div>
+    {% endif %}
 
-                {% if session.treinador_id %}
-                    <div class="actions">
-                        <a href="capturas_inserir.php?pokedex_id={{ pokemon.id }}">CAPTURAR</a>
-                        <a href="pokemons_editar.php?id={{ pokemon.id }}">EDITAR</a>
-                    </div>
-                {% endif %}
-            </div>
-        {% else %}
-            <p>Nenhum Pokémon cadastrado na Pokédex ainda.</p>
-        {% endfor %}
+    <img
+      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if pokemon.is_shiny %}shiny/{% endif %}{{ pokemon.numero_dex }}.png"
+      alt="Pokemon #{{ pokemon.numero_dex }}"
+      class="pokemon-img-card {% if pokemon.capturado == 0 %}silhouette{% endif %} {% if pokemon.is_shiny %}shiny-glow{% endif %}"
+      style="width: 96px; image-rendering: pixelated"
+    />
+
+    <div class="pokemon-info">
+      <span class="dex-number">#{{ "%03d"|format(pokemon.numero_dex) }}</span>
+      <strong class="pokemon-name" data-dex="{{ pokemon.numero_dex }}"
+        >{{ pokemon.nome|upper }}</strong
+      >
     </div>
+    <div class="types-container" data-dex="{{ pokemon.numero_dex }}"></div>
 
-    <script>
-        // Tradução de tipos e carregamento dinâmico dos tipos (nome já vem do PHP)
-        const typeLabels = { grass: 'PLANTA', poison: 'VENENO', fire: 'FOGO', flying: 'VOADOR', water: 'ÁGUA', bug: 'INSETO', normal: 'NORMAL', electric: 'ELÉTRICO', ground: 'TERRA', fairy: 'FADA', fighting: 'LUTADOR', psychic: 'PSÍQUICO', rock: 'PEDRA', steel: 'AÇO', ice: 'GELO', ghost: 'FANTASMA', dragon: 'DRAGÃO', dark: 'SOMBRIO' };
+    {% if session.treinador_id %}
+    <div class="actions">
+      <a href="capturas_inserir.php?pokedex_id={{ pokemon.id }}">CAPTURAR</a>
+      <a href="pokemons_editar.php?id={{ pokemon.id }}">EDITAR</a>
+    </div>
+    {% endif %}
+  </div>
+  {% else %}
+  <p>Nenhum Pokémon cadastrado na Pokédex ainda.</p>
+  {% endfor %}
+</div>
 
-        document.querySelectorAll('.pokemon-card').forEach(card => {
-            const container = card.querySelector('.types-container');
-            const dex = card.dataset.dex; // Pega o número da Dex do próprio card
+<script>
+  // Tradução de tipos e carregamento dinâmico dos tipos (nome já vem do PHP)
+  const typeLabels = {
+    grass: "PLANTA",
+    poison: "VENENO",
+    fire: "FOGO",
+    flying: "VOADOR",
+    water: "ÁGUA",
+    bug: "INSETO",
+    normal: "NORMAL",
+    electric: "ELÉTRICO",
+    ground: "TERRA",
+    fairy: "FADA",
+    fighting: "LUTADOR",
+    psychic: "PSÍQUICO",
+    rock: "PEDRA",
+    steel: "AÇO",
+    ice: "GELO",
+    ghost: "FANTASMA",
+    dragon: "DRAGÃO",
+    dark: "SOMBRIO",
+  };
 
-            if (dex) { // Garante que há um número da Dex válido
-                fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
-                    .then(r => r.json())
-                    .then(data => {
-                        data.types.forEach(t => {
-                            const span = document.createElement('span');
-                            span.className = 'type-tag';
-                            span.textContent = typeLabels[t.type.name] || t.type.name.toUpperCase();
-                            container.appendChild(span);
-                        });
-                    });
-            }
+  const typeClasses = {
+    grass: "planta",
+    poison: "veneno",
+    fire: "fogo",
+    flying: "voador",
+    water: "agua",
+    bug: "inseto",
+    normal: "normal",
+    electric: "eletrico",
+    ground: "terra",
+    fairy: "fada",
+    fighting: "lutador",
+    psychic: "psiquico",
+    rock: "pedra",
+    steel: "aço",
+    ice: "gelo",
+    ghost: "fantasma",
+    dragon: "dragao",
+    dark: "sombrio",
+  };
+
+  document.querySelectorAll(".pokemon-card").forEach((card) => {
+    const container = card.querySelector(".types-container");
+    const dex = card.dataset.dex; // Pega o número da Dex do próprio card
+
+    if (dex) {
+      // Garante que há um número da Dex válido
+      fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
+        .then((r) => r.json())
+        .then((data) => {
+          data.types.forEach((t) => {
+            const span = document.createElement("span");
+            const typeName = t.type.name;
+            span.className = `type-badge type-${typeClasses[typeName] || typeName}`;
+            span.textContent =
+              typeLabels[t.type.name] || t.type.name.toUpperCase();
+            container.appendChild(span);
+          });
         });
-    </script>
+    }
+  });
+</script>
 {% endblock %}

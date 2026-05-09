@@ -1,48 +1,147 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<div class="trade-header">
+  <h2>MERCADO DE TROCAS</h2>
+  <form action="trocas_inserir.php">
+    <button type="submit" class="btn btn-action">CRIAR OFERTA</button>
+  </form>
+</div>
 
-{% block content %}
-    <div class="trade-header">
-        <h2>MERCADO DE TROCAS</h2>
-        <form action="trocas_inserir.php"><button type="submit" class="trade-button create">CRIAR OFERTA</button></form>
+<div class="trade-grid">
+  {% for troca in trocas %}
+  <div class="pokemon-card trade-card" id="trade-{{ troca.id }}">
+    <div class="trade-offer-block">
+      <span class="dex-number">{{ troca.treinador_nome|upper }} OFERECE:</span>
+      <img
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if troca.pokemon_oferecido_shiny %}shiny/{% endif %}{{ troca.pokemon_oferecido_dex }}.png"
+        class="pokemon-small-img {% if troca.pokemon_oferecido_shiny %}shiny-glow{% endif %}"
+        alt="Pokémon Oferecido"
+        data-dex="{{ troca.pokemon_oferecido_dex }}"
+        style="width: 80px"
+      />
+      <p
+        class="pokemon-name"
+        data-dex="{{ troca.pokemon_oferecido_dex }}"
+        data-shiny="{{ troca.pokemon_oferecido_shiny }}"
+      >
+        {{ troca.pokemon_oferecido_nome|upper }}
+      </p>
+      {# Nome agora vem do PHP #}
     </div>
 
-    <div class="trade-grid">
-        {% for troca in trocas %}
-        <div class="pokemon-card trade-card">
-            <div class="trade-offer-block">
-                <span class="dex-number">{{ troca.treinador_nome|upper }} OFERECE:</span>
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if troca.pokemon_oferecido_shiny %}shiny/{% endif %}{{ troca.pokemon_oferecido_dex }}.png" 
-                     class="pokemon-small-img {% if troca.pokemon_oferecido_shiny %}shiny-glow{% endif %}"
-                     alt="Pokémon Oferecido" data-dex="{{ troca.pokemon_oferecido_dex }}" style="width: 80px;">
-                <p class="pokemon-name" data-dex="{{ troca.pokemon_oferecido_dex }}" data-shiny="{{ troca.pokemon_oferecido_shiny }}">{{ troca.pokemon_oferecido_nome|upper }}</p> {# Nome agora vem do PHP #}
-            </div>
+    <div class="trade-separator">⇄</div>
 
-            <div class="trade-separator">⇄</div>
-
-            <div class="trade-offer-block">
-                <span class="dex-number">PROCURA POR:</span>
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if troca.pokemon_desejado_shiny %}shiny/{% endif %}{{ troca.pokemon_desejado_dex }}.png" 
-                     class="pokemon-small-img {% if troca.pokemon_desejado_shiny %}shiny-glow{% endif %}"
-                     alt="Pokémon Desejado" data-dex="{{ troca.pokemon_desejado_dex }}" style="width: 80px;">
-                <p class="pokemon-name" data-dex="{{ troca.pokemon_desejado_dex }}" data-shiny="{{ troca.pokemon_desejado_shiny }}">{{ troca.pokemon_desejado_nome|upper }}</p> {# Nome agora vem do PHP #}
-            </div>
-
-            <div>
-                <form action="trocas_aceitar.php" method="get">
-                    <input type="hidden" name="id" value="{{ troca.id }}"> {# Pass trade ID #}
-                    <button type="submit" class="trade-button accept">Aceitar</button>
-                </form>
-            </div>
-        </div>
-        {% else %}
-        <p>Nenhuma oferta de troca no momento.</p>
-        {% endfor %}
+    <div class="trade-offer-block">
+      <span class="dex-number">PROCURA POR:</span>
+      <img
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if troca.pokemon_desejado_shiny %}shiny/{% endif %}{{ troca.pokemon_desejado_dex }}.png"
+        class="pokemon-small-img {% if troca.pokemon_desejado_shiny %}shiny-glow{% endif %}"
+        alt="Pokémon Desejado"
+        data-dex="{{ troca.pokemon_desejado_dex }}"
+        style="width: 80px"
+      />
+      <p
+        class="pokemon-name"
+        data-dex="{{ troca.pokemon_desejado_dex }}"
+        data-shiny="{{ troca.pokemon_desejado_shiny }}"
+      >
+        {{ troca.pokemon_desejado_nome|upper }}
+      </p>
+      {# Nome agora vem do PHP #}
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // O nome e a imagem agora são carregados diretamente do PHP.
-            // Se for necessário carregar os tipos aqui, um script similar ao de pokedex_listar.html seria implementado.
+    <div>
+      {% if session.treinador_id == troca.criador_id %}
+      <button
+        type="button"
+        class="btn btn-secondary"
+        style="opacity: 0.6; cursor: not-allowed"
+        disabled
+      >
+        MINHA OFERTA
+      </button>
+      {% elseif troca.possui > 0 %}
+      <form action="trocas_aceitar.php" method="get">
+        <input type="hidden" name="id" value="{{ troca.id }}" />
+        <button type="submit" class="btn btn-primary">ACEITAR</button>
+      </form>
+      {% else %}
+      <button
+        type="button"
+        class="btn btn-secondary"
+        style="opacity: 0.5; cursor: not-allowed"
+        title="Você não possui o Pokémon solicitado"
+        disabled
+      >
+        FALTA POKÉMON
+      </button>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <p>Nenhuma oferta de troca no momento.</p>
+  {% endfor %}
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const typeLabels = {
+      grass: "PLANTA",
+      poison: "VENENO",
+      fire: "FOGO",
+      flying: "VOADOR",
+      water: "ÁGUA",
+      bug: "INSETO",
+      normal: "NORMAL",
+      electric: "ELÉTRICO",
+      ground: "TERRA",
+      fairy: "FADA",
+      fighting: "LUTADOR",
+      psychic: "PSÍQUICO",
+      rock: "PEDRA",
+      steel: "AÇO",
+      ice: "GELO",
+      ghost: "FANTASMA",
+      dragon: "DRAGÃO",
+      dark: "SOMBRIO",
+    };
+
+    const typeClasses = {
+      grass: "planta",
+      poison: "veneno",
+      fire: "fogo",
+      flying: "voador",
+      water: "agua",
+      bug: "inseto",
+      normal: "normal",
+      electric: "eletrico",
+      ground: "terra",
+      fairy: "fada",
+      fighting: "lutador",
+      psychic: "psiquico",
+      rock: "pedra",
+      steel: "aço",
+      ice: "gelo",
+      ghost: "fantasma",
+      dragon: "dragao",
+      dark: "sombrio",
+    };
+
+    document.querySelectorAll(".types-container").forEach((container) => {
+      const dex = container.dataset.dex;
+      if (!dex) return;
+
+      fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
+        .then((r) => r.json())
+        .then((data) => {
+          data.types.forEach((t) => {
+            const span = document.createElement("span");
+            const typeName = t.type.name;
+            span.className = `type-badge type-${typeClasses[typeName] || typeName}`;
+            span.textContent = typeLabels[typeName] || typeName.toUpperCase();
+            container.appendChild(span);
+          });
         });
-    </script>
+    });
+  });
+</script>
 {% endblock %}

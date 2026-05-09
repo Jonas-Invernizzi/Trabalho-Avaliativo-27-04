@@ -29,10 +29,10 @@ try {
 
     // Busca os Pokémon capturados por este treinador
     $stmt = $pdo->prepare("
-        SELECT c.id, c.pokedex_id, c.nivel, c.quantidade_disponivel, p.numero_dex, p.is_shiny, p.nome
+        SELECT c.id, c.pokedex_id, c.quantidade_disponivel, p.numero_dex, p.is_shiny, p.nome
         FROM capturas c 
         JOIN pokedex p ON c.pokedex_id = p.id
-        WHERE c.treinador_id = :tid
+        WHERE c.treinador_id = :tid AND c.quantidade_disponivel > 0
         ORDER BY p.numero_dex ASC, p.is_shiny ASC
     ");
     $stmt->execute([':tid' => $id]);
@@ -51,18 +51,18 @@ try {
     // Busca as ofertas de troca que este treinador criou
     $stmt = $pdo->prepare("
         SELECT ot.id,
+               ot.pokedex_id_desejado AS pokemon_desejado_pokedex_id,
+               co.pokedex_id AS pokemon_oferecido_pokedex_id,
                pd.numero_dex AS pokemon_desejado_dex, pd.is_shiny AS pokemon_desejado_shiny, pd.nome AS pokemon_desejado_nome,
                po.numero_dex AS pokemon_oferecido_dex, po.is_shiny AS pokemon_oferecido_shiny, po.nome AS pokemon_oferecido_nome
         FROM ofertas_troca ot
         LEFT JOIN pokedex pd ON ot.pokedex_id_desejado = pd.id
         LEFT JOIN capturas co ON ot.captura_id_oferecida = co.id
         LEFT JOIN pokedex po ON co.pokedex_id = po.id
-        WHERE ot.treinador_id = :tid
+        WHERE ot.treinador_id = :tid AND co.quantidade_disponivel > 0
     ");
-    // Removi o filtro restrito de quantidade para que você possa ao menos ver a oferta e depurar se o Pokémon existe
     $stmt->execute([':tid' => $id]);
     $ofertas = $stmt->fetchAll();
-
 } catch (PDOException $e) {
     die("Erro ao carregar perfil: " . $e->getMessage());
 }

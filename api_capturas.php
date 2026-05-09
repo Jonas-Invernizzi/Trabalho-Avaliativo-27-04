@@ -11,7 +11,7 @@ if (!isset($_SESSION['treinador_id']) || $_SESSION['treinador_id'] != ($_GET['tr
 $tid = (int)($_GET['treinador_id'] ?? 0);
 
 if ($tid > 0) {
-    $sql = "SELECT c.id, c.nivel, p.numero_dex, p.is_shiny 
+    $sql = "SELECT c.id, p.numero_dex, p.is_shiny 
             FROM capturas c 
             JOIN pokedex p ON c.pokedex_id = p.id 
             WHERE c.treinador_id = :tid";

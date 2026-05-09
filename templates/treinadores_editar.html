@@ -1,29 +1,121 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="pokemon-panel" style="max-width: 600px; margin: auto;">
-    <h2>EDITAR PERFIL</h2>
-    <form action="treinadores_editar.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
-        <input type="hidden" name="id" value="{{ treinador.id }}">
-        
+{% extends "base.html" %} {% block title %}Editar Perfil{% endblock %} {% block
+content %}
+<div class="pokemon-panel" style="max-width: 850px; margin: auto">
+  <h2>EDITAR PERFIL</h2>
+  <form
+    action="treinadores_editar.php"
+    method="POST"
+    enctype="multipart/form-data"
+  >
+    <input type="hidden" name="id" value="{{ treinador.id }}" />
+
+    <div style="display: flex; gap: 30px; align-items: stretch">
+      <!-- Lado Esquerdo: Campos do Formulário -->
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 15px">
         <div>
-            <label>NOME:</label><br>
-            <input type="text" name="nome" value="{{ treinador.nome }}" required style="width: 100%;">
+          <label>NOME COMPLETO:</label>
+          <input
+            type="text"
+            name="nome"
+            value="{{ treinador.nome }}"
+            required
+            style="width: 100%"
+          />
         </div>
+
         <div>
-            <label>EMAIL:</label><br>
-            <input type="email" name="email" value="{{ treinador.email }}" required style="width: 100%;">
+          <label>E-MAIL:</label>
+          <input
+            type="email"
+            name="email"
+            value="{{ treinador.email }}"
+            required
+            style="width: 100%"
+          />
         </div>
+
         <div>
-            <label>CIDADE:</label><br>
-            <input type="text" name="cidade" value="{{ treinador.cidade }}" style="width: 100%;">
+          <label>CIDADE NATAL:</label>
+          <input
+            type="text"
+            name="cidade"
+            value="{{ treinador.cidade }}"
+            placeholder="Ex: Lavender Town"
+            style="width: 100%"
+          />
         </div>
-        <div>
-            <label>FOTO DE PERFIL:</label><br>
-            <input type="file" name="foto_perfil">
+      </div>
+
+      <!-- Lado Direito: Preview da Imagem -->
+      <div
+        style="
+          width: 250px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          flex-shrink: 0;
+        "
+      >
+        <label>PREVIEW:</label>
+        <div
+          style="
+            width: 250px;
+            flex: 1;
+            border: 4px solid var(--poke-dark);
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+          "
+        >
+          <img
+            id="img-preview"
+            src="{{ treinador.foto_perfil }}"
+            style="width: 100%; height: 100%; object-fit: cover"
+          />
         </div>
-        
-        <button type="submit">ATUALIZAR DADOS</button>
-        <a href="treinadores_listar.php" class="btn-link" style="display: block; text-align: center; margin-top: 10px;">VOLTAR</a>
-    </form>
+
+        <div style="text-align: left">
+          <label style="font-size: 0.6rem">FOTO DE PERFIL:</label>
+          <input
+            type="file"
+            name="foto_perfil"
+            id="foto_perfil_input"
+            accept="image/*"
+            style="width: 100%; font-size: 0.6rem; padding: 8px"
+          />
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" style="width: 100%; margin-top: 20px">
+      ATUALIZAR DADOS
+    </button>
+    <a
+      href="treinadores_listar.php"
+      class="btn btn-secondary"
+      style="display: block; text-align: center; margin-top: 10px"
+      >VOLTAR</a
+    >
+  </form>
 </div>
+
+<script>
+  document
+    .getElementById("foto_perfil_input")
+    .addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document
+            .getElementById("img-preview")
+            .setAttribute("src", e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+</script>
 {% endblock %}

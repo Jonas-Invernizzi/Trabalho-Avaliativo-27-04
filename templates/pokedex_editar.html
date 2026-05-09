@@ -1,77 +1,82 @@
 {% extends 'base.html' %} {% block title %}Editar Pokémon{% endblock %} {% block
 content %}
-<div class="pokemon-panel" style="max-width: 800px; margin: auto;">
-    <h2>Editar Pokémon: {{ pokemon.nome }}</h2>
-    <form action="pokemons_editar.php" method="post">
-      <input type="hidden" name="id" value="{{ pokemon.id }}" />
-      <div class="form-main-content">
-        <div id="preview-container" class="form-image-preview">
-          <img
-            id="pokemon_preview"
-            src="{{ pokemon.imagem_url }}"
-            alt="Preview"
-            class="pokemon-preview-img {% if pokemon.is_shiny %}is-shiny{% endif %}"
-          />
-          <p id="shiny_toggle_hint" style="font-size: 8px; color: var(--poke-blue); margin-top: 10px;">CLIQUE PARA ALTERNAR SHINY</p>
-        </div>
-        <input
-          type="hidden"
-          id="is_shiny_input"
-          name="is_shiny"
-          value="{{ pokemon.is_shiny }}"
+<div class="pokemon-panel" style="max-width: 800px; margin: auto">
+  <h2>Editar Pokémon: {{ pokemon.nome }}</h2>
+  <form action="pokemons_editar.php" method="post">
+    <input type="hidden" name="id" value="{{ pokemon.id }}" />
+    <div class="form-main-content">
+      <div id="preview-container" class="form-image-preview">
+        <img
+          id="pokemon_preview"
+          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if pokemon.is_shiny %}shiny/{% endif %}{{ pokemon.numero_dex }}.png"
+          alt="Preview"
+          class="pokemon-preview-img {% if pokemon.is_shiny %}is-shiny{% endif %}"
         />
-        <div class="form-fields-group">
-          <div class="form-field-half">
-            <label for="numero_dex">NÚMERO DEX:</label>
-            <input
-              type="number"
-              id="numero_dex"
-              name="numero_dex"
-              value="{{ pokemon.numero_dex }}"
-              required
-            />
-          </div>
-          <div class="form-field-half">
-            <label for="nome">NOME:</label>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              value="{{ pokemon.nome }}"
-              required
-              readonly
-              style="background: #eee; cursor: not-allowed;"
-            />
-          </div>
-          <div class="form-field-half">
-            <label for="tipo_principal">TIPO 1:</label>
-            <input
-              type="text"
-              id="tipo_principal"
-              name="tipo_principal"
-              value="{{ pokemon.tipo_principal }}"
-              required
-              readonly
-              style="background: #eee; cursor: not-allowed;"
-            />
-          </div>
-          <div class="form-field-half">
-            <label for="tipo_secundario">TIPO 2 (opcional):</label>
-            <input
-              type="text"
-              id="tipo_secundario"
-              name="tipo_secundario"
-              value="{{ pokemon.tipo_secundario }}"
-              readonly
-              style="background: #eee; cursor: not-allowed;"
-            />
-          </div>
+        <p
+          id="shiny_toggle_hint"
+          style="font-size: 8px; color: var(--poke-blue); margin-top: 10px"
+        >
+          CLIQUE PARA ALTERNAR SHINY
+        </p>
+      </div>
+      <input
+        type="hidden"
+        id="is_shiny_input"
+        name="is_shiny"
+        value="{{ pokemon.is_shiny }}"
+      />
+      <div class="form-fields-group">
+        <div class="form-field-half">
+          <label for="numero_dex">NÚMERO DEX:</label>
+          <input
+            type="number"
+            id="numero_dex"
+            name="numero_dex"
+            value="{{ pokemon.numero_dex }}"
+            required
+          />
+        </div>
+        <div class="form-field-half">
+          <label for="nome">NOME:</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            value="{{ pokemon.nome }}"
+            required
+            readonly
+            style="background: #eee; cursor: not-allowed"
+          />
+        </div>
+        <div class="form-field-half">
+          <label for="tipo_principal">TIPO 1:</label>
+          <input
+            type="text"
+            id="tipo_principal"
+            name="tipo_principal"
+            value="{{ pokemon.tipo_principal }}"
+            required
+            readonly
+            style="background: #eee; cursor: not-allowed"
+          />
+        </div>
+        <div class="form-field-half">
+          <label for="tipo_secundario">TIPO 2:</label>
+          <input
+            type="text"
+            id="tipo_secundario"
+            name="tipo_secundario"
+            value="{{ pokemon.tipo_secundario }}"
+            readonly
+            style="background: #eee; cursor: not-allowed"
+          />
         </div>
       </div>
-      <div style="text-align: center; margin-top: 20px">
-        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-      </div>
-    </form>
+    </div>
+    <div style="text-align: center; margin-top: 20px">
+      <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </div>
+  </form>
 </div>
 
 <script>

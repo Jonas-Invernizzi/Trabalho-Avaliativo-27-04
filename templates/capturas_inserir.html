@@ -1,71 +1,74 @@
 {% extends 'base.html' %} {% block title %}Registrar Captura{% endblock %} {%
 block content %}
-<div class="pokemon-panel" style="max-width: 800px; margin: auto;">
-    <h2>CAPTURAR <span id="poke-name">CARREGANDO...</span></h2>
+<div class="pokemon-panel" style="max-width: 600px; margin: 0 auto 30px auto">
+  <h2 style="text-align: center; border: none; padding-left: 0">
+    CAPTURAR <span id="poke-name">CARREGANDO...</span>
+  </h2>
 
-    {% if erro %}
-    <p class="error">{{ erro }}</p>
-    {% endif %}
+  {% if erro %}
+  <p class="error" style="text-align: center">{{ erro }}</p>
+  {% endif %}
 
-    <form action="capturas_inserir.php?pokedex_id={{ pokemon.id }}" method="post">
-      <div class="form-main-content">
-        <div class="form-image-preview">
-          <img
-            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if pokemon.is_shiny %}shiny/{% endif %}{{ pokemon.numero_dex }}.png"
-            alt="Pokemon #{{ pokemon.numero_dex }}"
-            class="pokemon-preview-img"
+  <form action="capturas_inserir.php?pokedex_id={{ pokemon.id }}" method="post">
+    <div class="form-main-content">
+      <div class="form-image-preview">
+        <img
+          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{% if pokemon.is_shiny %}shiny/{% endif %}{{ pokemon.numero_dex }}.png"
+          alt="Pokemon #{{ pokemon.numero_dex }}"
+          class="pokemon-preview-img"
+        />
+        <span class="dex-number"
+          >No. {{ "%03d"|format(pokemon.numero_dex) }}</span
+        >
+      </div>
+      <div
+        class="form-fields-group"
+        style="
+          grid-template-columns: 1fr;
+          justify-items: center;
+          text-align: center;
+        "
+      >
+        <div class="form-field-half" style="align-items: center; width: 100%">
+          <label style="margin-bottom: 8px; display: block">QUANTIDADE:</label>
+          <input
+            type="number"
+            name="quantidade_disponivel"
+            value="1"
+            min="1"
+            required
+            style="width: 100px; text-align: center"
           />
-          <span class="dex-number">No. {{ "%03d"|format(pokemon.numero_dex) }}</span>
-        </div>
-        <div class="form-fields-group">
-          <div class="form-field-half">
-            <label>NÍVEL:</label
-            ><input
-              type="number"
-              name="nivel"
-              value="1"
-              min="1"
-              max="100"
-              required
-            />
-          </div>
-          <div class="form-field-half">
-            <label>QUANTIDADE PARA TROCA:</label>
-            <input
-              type="number"
-              name="quantidade_disponivel"
-              value="1"
-              min="1"
-              required
-            />
-          </div>
         </div>
       </div>
-      <div style="text-align: center">
-        <button type="submit" class="btn btn-primary">
-          ADICIONAR À MINHA EQUIPE
-        </button>
-        <a href="lista_desejos_adicionar.php?pokedex_id={{ pokemon.id }}" class="btn btn-action">
-          ADICIONAR À LISTA DE DESEJOS
-        </a>
-      </div>
-    </form>
-</div>
-<br />
-<div style="text-align: center">
-  <a href="Pokemon.php" class="btn btn-secondary">VOLTAR À POKÉDEX</a>
+    </div>
+    <div style="text-align: center">
+      <button type="submit" class="btn btn-primary">
+        ADICIONAR À MINHA EQUIPE
+      </button>
+      <a
+        href="lista_desejos_adicionar.php?pokedex_id={{ pokemon.id }}"
+        class="btn btn-action"
+      >
+        ADICIONAR À LISTA DE DESEJOS
+      </a>
+    </div>
+  </form>
+  <div style="text-align: center; margin-top: 20px">
+    <a href="Pokemon.php" class="btn btn-secondary">VOLTAR À POKÉDEX</a>
+  </div>
 </div>
 
 <script>
-    // Busca o nome dinamicamente da API
-    const nameEl = document.getElementById('poke-name');
-    const dex = "{{ pokemon.numero_dex }}";
+  // Busca o nome dinamicamente da API
+  const nameEl = document.getElementById("poke-name");
+  const dex = "{{ pokemon.numero_dex }}";
 
-    fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
-        .then(r => r.json())
-        .then(data => {
-            nameEl.textContent = data.name.toUpperCase();
-        })
-        .catch(() => nameEl.textContent = "DESCONHECIDO");
+  fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
+    .then((r) => r.json())
+    .then((data) => {
+      nameEl.textContent = data.name.toUpperCase();
+    })
+    .catch(() => (nameEl.textContent = "DESCONHECIDO"));
 </script>
 {% endblock %}

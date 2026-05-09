@@ -1,61 +1,81 @@
 {% extends 'base.html' %} {% block content %}
-<h2>NOVO POKÉMON</h2>
-{% if erro %}
-<p class="error">{{ erro }}</p>
-{% endif %}
-<form action="pokemons_inserir.php" method="post">
-  <div class="form-main-content">
-    {# Main container for image and fields #}
-    <div id="preview-container" class="form-image-preview">
-      {# Image preview container #}
-      <img
-        id="pokemon_preview"
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
-        alt="Preview"
-        class="pokemon-preview-img"
-      />
-      <p id="shiny_toggle_hint" style="font-size: 8px; color: var(--poke-blue); margin-top: 10px; display: none;">CLIQUE PARA ALTERNAR SHINY</p>
-    </div>
-    <input type="hidden" id="is_shiny_input" name="is_shiny" value="0" />
-    <div class="form-fields-group">
-      <div class="form-field-half">
-        <label>NÚMERO DEX:</label
-        ><input type="number" id="numero_dex" name="numero_dex" required />
-      </div>
-      <div class="form-field-half">
-        <label>NOME:</label><input type="text" id="nome" name="nome" required readonly style="background: #eee; cursor: not-allowed;" />
-      </div>
-      <div class="form-field-half">
-        <label>TIPO 1:</label
-        ><input
-          type="text"
-          id="tipo_principal"
-          name="tipo_principal"
-          required
-          readonly
-          style="background: #eee; cursor: not-allowed;"
+<div class="pokemon-panel" style="max-width: 600px; margin: 0 auto 30px auto">
+  <h2 style="text-align: center; border: none; padding-left: 0">
+    NOVO POKÉMON
+  </h2>
+  {% if erro %}
+  <p class="error" style="text-align: center">{{ erro }}</p>
+  {% endif %}
+  <form action="pokemons_inserir.php" method="post">
+    <div class="form-main-content">
+      {# Main container for image and fields #}
+      <div id="preview-container" class="form-image-preview">
+        {# Image preview container #}
+        <img
+          id="pokemon_preview"
+          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
+          alt="Preview"
+          class="pokemon-preview-img"
         />
+        <p
+          id="shiny_toggle_hint"
+          style="
+            font-size: 8px;
+            color: var(--poke-blue);
+            margin-top: 10px;
+            display: none;
+          "
+        >
+          CLIQUE PARA ALTERNAR SHINY
+        </p>
       </div>
-      <div class="form-field-half">
-        <label>TIPO 2:</label><input type="text" id="tipo_secundario" name="tipo_secundario" readonly style="background: #eee; cursor: not-allowed;" />
-      </div>
-      <div class="form-field-half">
-        <label>NÍVEL INICIAL:</label>
-        <input type="number" name="nivel" value="5" min="1" max="100" required />
-      </div>
-      <div class="form-field-half">
-        <label>QUANTIDADE PARA TROCA:</label>
-        <input type="number" name="quantidade_disponivel" value="1" min="1" required />
+      <input type="hidden" id="is_shiny_input" name="is_shiny" value="0" />
+      <div class="form-fields-group">
+        <div class="form-field-half">
+          <label>NÚMERO DEX:</label
+          ><input type="number" id="numero_dex" name="numero_dex" required />
+        </div>
+        <div class="form-field-half">
+          <label>NOME:</label
+          ><input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+            readonly
+            style="background: #eee; cursor: not-allowed"
+          />
+        </div>
+        <div class="form-field-half">
+          <label>TIPO 1:</label
+          ><input
+            type="text"
+            id="tipo_principal"
+            name="tipo_principal"
+            required
+            readonly
+            style="background: #eee; cursor: not-allowed"
+          />
+        </div>
+        <div class="form-field-half">
+          <label>TIPO 2:</label
+          ><input
+            type="text"
+            id="tipo_secundario"
+            name="tipo_secundario"
+            readonly
+            style="background: #eee; cursor: not-allowed"
+          />
+        </div>
       </div>
     </div>
+    <div style="text-align: center">
+      <button type="submit" class="btn btn-primary">GRAVAR</button>
+    </div>
+  </form>
+  <div style="text-align: center; margin-top: 20px">
+    <a href="Pokemon.php" class="btn btn-secondary">VOLTAR</a>
   </div>
-  <div style="text-align: center">
-    <button type="submit" class="btn btn-primary">GRAVAR</button>
-  </div>
-</form>
-<br />
-<div style="text-align: center">
-  <a href="Pokemon.php" class="btn btn-secondary">VOLTAR</a>
 </div>
 
 <script>

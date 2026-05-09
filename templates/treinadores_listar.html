@@ -1,34 +1,39 @@
-{% extends 'base.html' %}
-
-{% block title %}Lista de Treinadores{% endblock %}
-{% block content %}
-    <h2>Lista de Treinadores</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Cidade</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for treinador in treinadores %}
-                <tr>
-                    <td>{{ treinador.nome|upper }}</td>
-                    <td>{{ treinador.email }}</td>
-                    <td>{{ treinador.cidade|upper }}</td>
-                    <td class="actions">
-                        <a href="treinador_perfil.php?id={{ treinador.id }}" class="btn-link">[VER PERFIL]</a>
-                        {% if session.treinador_id == treinador.id %}
-                            <a href="treinadores_editar.php?id={{ treinador.id }}" class="btn-link">[EDITAR]</a>
-                            <a href="treinadores_excluir.php?id={{ treinador.id }}" class="btn-link" onclick="return confirm('Deseja realmente excluir este treinador?')">[EXCLUIR]</a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr><td colspan="4">Nenhum treinador cadastrado.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% extends 'base.html' %} {% block title %}Lista de Treinadores{% endblock %} {%
+block content %}
+<h2>Lista de Treinadores</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>E-mail</th>
+      <th>Cidade</th>
+      <th style="text-align: center">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for treinador in treinadores %}
+    <tr>
+      <td>
+        {{ treinador.nome|upper }} {% if session.treinador_id == treinador.id %}
+        <span
+          style="color: var(--poke-red); font-size: 0.5rem; margin-left: 10px"
+          >[VOCÊ]</span
+        >
+        {% endif %}
+      </td>
+      <td>{{ treinador.email }}</td>
+      <td>{{ treinador.cidade|upper }}</td>
+      <td class="actions">
+        <a href="treinador_perfil.php?id={{ treinador.id }}" class="btn-link"
+          >[VER PERFIL]</a
+        >
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="4">Nenhum treinador cadastrado.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

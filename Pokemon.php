@@ -15,7 +15,8 @@ try {
 
     $sql = "
         SELECT p.*, 
-        COALESCE((SELECT SUM(quantidade_disponivel) FROM capturas c WHERE c.pokedex_id = p.id AND c.treinador_id = :tid), 0) as capturado 
+        COALESCE((SELECT SUM(quantidade_disponivel) FROM capturas c WHERE c.pokedex_id = p.id AND c.treinador_id = :tid), 0) as capturado,
+        EXISTS(SELECT 1 FROM treinador_pokedex tp WHERE tp.pokedex_id = p.id AND tp.treinador_id = :tid) as visto
         FROM pokedex p
     ";
 
